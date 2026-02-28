@@ -1,0 +1,9 @@
+feature,mean_shap
+Year (2018–2024),0.007138041705019912
+NDVI Anomaly (dry season),0.0016221622394104363
+Rainfall Anomaly (mm),0.0014431091001684121
+Log Nighttime Lights,0.0013273507392015816
+Forest Cover (%),0.0011686986422910965
+Savanna Cover (%),0.0009439135563171507
+Log Population Density,0.00039432321069782185
+Cropland Cover (%),0.0002852288009109163

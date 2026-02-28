@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_f20df19c82809b505f892fa9031cb74a {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ardhi/Leaflet.MousePosition/src/L.Control.MousePosition.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ardhi/Leaflet.MousePosition/src/L.Control.MousePosition.min.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/python-visualization/folium@main/folium/templates/leaflet_heat.min.js"></script>
+</head>
+<body>
+    
+    
+<div style='
+    position:fixed; top:12px; left:55px;
+    background:rgba(255,255,255,0.95);
+    border-radius:10px;
+    box-shadow:0 3px 14px rgba(0,0,0,0.2);
+    padding:12px 16px;
+    z-index:9998;
+    font-family:Arial,sans-serif;
+    max-width:280px;
+    border-left:5px solid #d73027;'>
+  <div style='font-size:14px;font-weight:bold;color:#b30000;line-height:1.3;'>
+      The Human-Fire System</div>
+  <div style='font-size:11px;color:#444;margin-top:3px;line-height:1.4;'>
+    Socioeconomic drivers of wildfire probability
+    and urban smoke exposure in East &amp; Southern Africa
+  </div>
+  <hr style='margin:7px 0;border:none;border-top:1px solid #eee;'>
+  <div style='font-size:10px;color:#666;line-height:1.5;'>
+       <b>5 countries</b> &nbsp;·&nbsp; 1°×1° grid &nbsp;·&nbsp; 2018–2024<br>
+       <b>15 cities</b> monitored for smoke exposure<br>
+       <b>Random Forest</b> + SHAP explainability<br>
+        MODIS · S5P TROPOMI · WorldPop · ERA5
+  </div>
+  <div style='margin-top:7px;font-size:9px;color:#999;'>
+    Click city bubbles for details &nbsp;|&nbsp; Use tabs → for analytics
+  </div>
+</div>
+    
+<div style='
+    position:fixed; bottom:20px; left:10px;
+    background:rgba(255,255,255,0.96);
+    border-radius:10px;
+    box-shadow:0 3px 14px rgba(0,0,0,0.18);
+    padding:13px 15px;
+    z-index:9998;
+    font-family:Arial,sans-serif;
+    min-width:190px;
+    border:1px solid #ddd;'>
+
+  <!-- Heatmap legend -->
+  <div style='font-weight:bold;font-size:11px;color:#b30000;margin-bottom:6px;'>
+    🔥 Fire Anomaly Heatmap</div>
+  <div style='font-size:10px;color:#555;margin-bottom:4px;'>
+    RF predicted deviation from cell baseline</div>
+  <div style='display:flex;align-items:center;margin-bottom:2px;'>
+    <div style='
+      width:130px;height:12px;border-radius:3px;margin-right:6px;
+      background:linear-gradient(to right,#ffffcc,#fd8d3c,#e31a1c,#67000d);'>
+    </div>
+  </div>
+  <div style='display:flex;justify-content:space-between;
+              font-size:9px;color:#777;width:130px;margin-bottom:10px;'>
+    <span>Slight +</span><span>Moderate</span><span>Severe</span>
+  </div>
+
+  <hr style='border:none;border-top:1px solid #eee;margin:8px 0;'>
+
+  <!-- Bubble legend -->
+  <div style='font-weight:bold;font-size:11px;color:#555;margin-bottom:6px;'>
+    💨 City Smoke Exposure (PEI)</div>
+  <div style='display:flex;align-items:center;gap:10px;margin-bottom:4px;'>
+    <div style='display:flex;flex-direction:column;align-items:center;'>
+      <div style='width:10px;height:10px;border-radius:50%;
+                  background:#888;opacity:0.75;'></div>
+      <span style='font-size:9px;color:#777;margin-top:2px;'>Low</span>
+    </div>
+    <div style='display:flex;flex-direction:column;align-items:center;'>
+      <div style='width:18px;height:18px;border-radius:50%;
+                  background:#888;opacity:0.75;'></div>
+      <span style='font-size:9px;color:#777;margin-top:2px;'>Medium</span>
+    </div>
+    <div style='display:flex;flex-direction:column;align-items:center;'>
+      <div style='width:28px;height:28px;border-radius:50%;
+                  background:#888;opacity:0.75;'></div>
+      <span style='font-size:9px;color:#777;margin-top:2px;'>High</span>
+    </div>
+  </div>
+  <div style='font-size:9px;color:#999;margin-bottom:10px;'>
+    Bubble size ∝ cumulative PEI 2018–2024<br>
+    Click bubble for city details
+  </div>
+
+  <hr style='border:none;border-top:1px solid #eee;margin:8px 0;'>
+
+  <!-- Country colour key -->
+  <div style='font-weight:bold;font-size:11px;color:#555;margin-bottom:6px;'>
+    🌍 Country</div>
+  <div style="display:flex;align-items:center;margin:3px 0;"><div style="width:13px;height:13px;border-radius:50%;background:#e31a1c;margin-right:7px;flex-shrink:0;"></div><span style="font-size:10px;color:#333;">Zambia</span></div><div style="display:flex;align-items:center;margin:3px 0;"><div style="width:13px;height:13px;border-radius:50%;background:#fd8d3c;margin-right:7px;flex-shrink:0;"></div><span style="font-size:10px;color:#333;">Tanzania</span></div><div style="display:flex;align-items:center;margin:3px 0;"><div style="width:13px;height:13px;border-radius:50%;background:#fecc5c;margin-right:7px;flex-shrink:0;"></div><span style="font-size:10px;color:#333;">Malawi</span></div><div style="display:flex;align-items:center;margin:3px 0;"><div style="width:13px;height:13px;border-radius:50%;background:#41ab5d;margin-right:7px;flex-shrink:0;"></div><span style="font-size:10px;color:#333;">Mozambique</span></div><div style="display:flex;align-items:center;margin:3px 0;"><div style="width:13px;height:13px;border-radius:50%;background:#2c7bb6;margin-right:7px;flex-shrink:0;"></div><span style="font-size:10px;color:#333;">Zimbabwe</span></div>
+</div>
+    
+<div id='hfs-panel' style='
+    position:fixed;bottom:20px;right:20px;width:350px;
+    background:rgba(255,255,255,0.97);border-radius:12px;
+    box-shadow:0 4px 24px rgba(0,0,0,0.22);
+    font-family:Arial,sans-serif;z-index:9999;
+    overflow:hidden;border:1px solid #ddd;'>
+
+  <div style='background:linear-gradient(135deg,#b30000,#d73027);padding:12px 16px;'>
+    <div style='color:white;font-weight:bold;font-size:13px;'>
+        Human–Fire System Analytics</div>
+    <div style='color:#ffcccc;font-size:10px;margin-top:2px;'>
+      5 Countries &nbsp;·&nbsp; 15 Cities &nbsp;·&nbsp; 2018–2024
+      &nbsp;·&nbsp; RF CV R²=0.083</div>
+  </div>
+
+  <div style='display:flex;background:#f0f0f0;border-bottom:2px solid #d73027;'>
+    <button onclick='hfsTab("drivers")' id='hfs-btn-drivers'
+      style='flex:1;padding:7px 1px;font-size:9.5px;border:none;cursor:pointer;
+             background:#d73027;color:white;font-weight:bold;'>🧩 Drivers</button>
+    <button onclick='hfsTab("exposure")' id='hfs-btn-exposure'
+      style='flex:1;padding:7px 1px;font-size:9.5px;border:none;cursor:pointer;
+             background:#f0f0f0;color:#444;'>💨 Exposure</button>
+    <button onclick='hfsTab("model")' id='hfs-btn-model'
+      style='flex:1;padding:7px 1px;font-size:9.5px;border:none;cursor:pointer;
+             background:#f0f0f0;color:#444;'>📊 Model</button>
+    <button onclick='hfsTab("countries")' id='hfs-btn-countries'
+      style='flex:1;padding:7px 1px;font-size:9.5px;border:none;cursor:pointer;
+             background:#f0f0f0;color:#444;'>🌍 Countries</button>
+    <button onclick='hfsTab("findings")' id='hfs-btn-findings'
+      style='flex:1;padding:7px 1px;font-size:9.5px;border:none;cursor:pointer;
+             background:#f0f0f0;color:#444;'>🔍 Findings</button>
+  </div>
+
+  <div style='max-height:360px;overflow-y:auto;padding:14px;font-size:11px;'>
+
+    <div id='hfs-tab-drivers'>
+      <div style='font-weight:bold;font-size:12px;color:#b30000;margin-bottom:10px;'>
+        SHAP Feature Importance - Top 5 Fire Anomaly Drivers</div>
+      <div style="margin:6px 0"><span style="font-size:11px;color:#333">Year (2018–2024)</span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#d73027;height:13px;border-radius:3px;width:100%"></div></div><span style="font-size:10px;color:#666">0.007138</span></div><div style="margin:6px 0"><span style="font-size:11px;color:#333">NDVI Anomaly (dry season)</span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#d73027;height:13px;border-radius:3px;width:22%"></div></div><span style="font-size:10px;color:#666">0.001622</span></div><div style="margin:6px 0"><span style="font-size:11px;color:#333">Rainfall Anomaly (mm)</span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#d73027;height:13px;border-radius:3px;width:20%"></div></div><span style="font-size:10px;color:#666">0.001443</span></div><div style="margin:6px 0"><span style="font-size:11px;color:#333">Log Nighttime Lights</span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#d73027;height:13px;border-radius:3px;width:18%"></div></div><span style="font-size:10px;color:#666">0.001327</span></div><div style="margin:6px 0"><span style="font-size:11px;color:#333">Forest Cover (%)</span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#d73027;height:13px;border-radius:3px;width:16%"></div></div><span style="font-size:10px;color:#666">0.001169</span></div>
+      <div style='margin-top:10px;font-size:10px;color:#888;line-height:1.4;'>
+        Mean |SHAP| from Random Forest on 1,483 observations.
+        Higher bar = stronger influence on predicted fire anomaly.
+      </div>
+    </div>
+
+    <div id='hfs-tab-exposure' style='display:none'>
+      <div style='font-weight:bold;font-size:12px;color:#b30000;margin-bottom:10px;'>
+        Urban Smoke Exposure - Top 8 Cities by PEI</div>
+      <div style="margin:5px 0"><span style="font-size:11px;color:#333">Dar es Salaam <span style="color:#999;font-size:10px">(Tan)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#fd8d3c;height:13px;border-radius:3px;width:100%"></div></div><span style="font-size:10px;color:#666">PEI=97.74 | Pop=5.63M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Lusaka <span style="color:#999;font-size:10px">(Zam)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#e31a1c;height:13px;border-radius:3px;width:50%"></div></div><span style="font-size:10px;color:#666">PEI=49.07 | Pop=2.85M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Maputo <span style="color:#999;font-size:10px">(Moz)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#41ab5d;height:13px;border-radius:3px;width:45%"></div></div><span style="font-size:10px;color:#666">PEI=44.44 | Pop=2.40M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Harare <span style="color:#999;font-size:10px">(Zim)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#2c7bb6;height:13px;border-radius:3px;width:39%"></div></div><span style="font-size:10px;color:#666">PEI=38.64 | Pop=2.24M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Lilongwe <span style="color:#999;font-size:10px">(Mal)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#fecc5c;height:13px;border-radius:3px;width:28%"></div></div><span style="font-size:10px;color:#666">PEI=28.26 | Pop=1.72M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Blantyre <span style="color:#999;font-size:10px">(Mal)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#fecc5c;height:13px;border-radius:3px;width:21%"></div></div><span style="font-size:10px;color:#666">PEI=21.46 | Pop=1.29M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Mwanza <span style="color:#999;font-size:10px">(Tan)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#fd8d3c;height:13px;border-radius:3px;width:16%"></div></div><span style="font-size:10px;color:#666">PEI=16.19 | Pop=1.01M</span></div><div style="margin:5px 0"><span style="font-size:11px;color:#333">Nampula <span style="color:#999;font-size:10px">(Moz)</span></span><br><div style="background:#e0e0e0;border-radius:3px;height:13px;width:100%"><div style="background:#41ab5d;height:13px;border-radius:3px;width:16%"></div></div><span style="font-size:10px;color:#666">PEI=15.88 | Pop=0.91M</span></div>
+      <div style='margin-top:10px;font-size:10px;color:#888;line-height:1.4;'>
+        PEI = Σ max(AAI_anomaly, 0) × urban_pop / 10⁶<br>
+        Bubble size on map ∝ cumulative PEI 2018–2024.
+      </div>
+    </div>
+
+    <div id='hfs-tab-model' style='display:none'>
+      <div style='font-weight:bold;font-size:12px;color:#b30000;margin-bottom:10px;'>
+        Random Forest - 5-Fold Spatial Block CV</div>
+      <table style='width:100%;border-collapse:collapse;font-size:11px;'>
+        <tr style='background:#f0f0f0;font-weight:bold;'>
+          <td style='padding:4px 7px'>Block</td>
+          <td style='padding:4px 7px'>R²</td>
+          <td style='padding:4px 7px'>r</td>
+          <td style='padding:4px 7px'>RMSE</td>
+        </tr>
+        <tr style="background:#f9f9f9"><td style="padding:3px 7px">Block 0</td><td style="padding:3px 7px;color:#d73027;font-weight:bold">0.036</td><td style="padding:3px 7px">0.215</td><td style="padding:3px 7px">0.03424</td></tr><tr style="background:white"><td style="padding:3px 7px">Block 1</td><td style="padding:3px 7px;color:#1a9641;font-weight:bold">0.138</td><td style="padding:3px 7px">0.381</td><td style="padding:3px 7px">0.03210</td></tr><tr style="background:#f9f9f9"><td style="padding:3px 7px">Block 2</td><td style="padding:3px 7px;color:#1a9641;font-weight:bold">0.071</td><td style="padding:3px 7px">0.288</td><td style="padding:3px 7px">0.02941</td></tr><tr style="background:white"><td style="padding:3px 7px">Block 3</td><td style="padding:3px 7px;color:#1a9641;font-weight:bold">0.083</td><td style="padding:3px 7px">0.296</td><td style="padding:3px 7px">0.04020</td></tr><tr style="background:#f9f9f9"><td style="padding:3px 7px">Block 4</td><td style="padding:3px 7px;color:#1a9641;font-weight:bold">0.087</td><td style="padding:3px 7px">0.301</td><td style="padding:3px 7px">0.04062</td></tr>
+        <tr style='background:#fff8e1;font-weight:bold;border-top:2px solid #ddd;'>
+          <td style='padding:4px 7px'>Mean</td>
+          <td style='padding:4px 7px;color:#1a6b3c;'>0.083 ± 0.036</td>
+          <td style='padding:4px 7px'>0.296</td>
+          <td style='padding:4px 7px'>0.03531</td>
+        </tr>
+      </table>
+      <div style='margin-top:10px;font-size:10px;color:#888;line-height:1.4;'>
+        Target: burned_fraction − cell 7yr baseline<br>
+        CV: spatial block (longitude quantile folds - no spatial leakage)<br>
+        Features: 8 socioeconomic + climate anomaly variables
+      </div>
+    </div>
+
+    <div id='hfs-tab-countries' style='display:none'>
+      <div style='font-weight:bold;font-size:12px;color:#b30000;margin-bottom:10px;'>
+        Country-Level Smoke Exposure Burden</div>
+      <table style='width:100%;border-collapse:collapse;font-size:11px;'>
+        <tr style='background:#f0f0f0;font-weight:bold;'>
+          <td style='padding:4px 7px'>Country</td>
+          <td style='padding:4px 7px'>Cum. PEI</td>
+          <td style='padding:4px 7px'>Largest City</td>
+        </tr>
+        <tr style="background:#f9f9f9"><td style="padding:3px 7px;font-weight:bold;color:#fd8d3c">Tanzania</td><td style="padding:3px 7px">128.73</td><td style="padding:3px 7px">5.6M</td></tr><tr style="background:white"><td style="padding:3px 7px;font-weight:bold;color:#e31a1c">Zambia</td><td style="padding:3px 7px">71.90</td><td style="padding:3px 7px">2.8M</td></tr><tr style="background:#f9f9f9"><td style="padding:3px 7px;font-weight:bold;color:#41ab5d">Mozambique</td><td style="padding:3px 7px">68.48</td><td style="padding:3px 7px">2.4M</td></tr><tr style="background:white"><td style="padding:3px 7px;font-weight:bold;color:#2c7bb6">Zimbabwe</td><td style="padding:3px 7px">58.77</td><td style="padding:3px 7px">2.2M</td></tr><tr style="background:#f9f9f9"><td style="padding:3px 7px;font-weight:bold;color:#fecc5c">Malawi</td><td style="padding:3px 7px">49.71</td><td style="padding:3px 7px">1.7M</td></tr>
+      </table>
+      <div style='margin-top:10px;font-size:10px;color:#888;'>
+        PEI summed across all monitored cities per country.
+      </div>
+    </div>
+
+    <div id='hfs-tab-findings' style='display:none'>
+      <div style='font-weight:bold;font-size:12px;color:#b30000;margin-bottom:10px;'>
+        🔑 Key Scientific Findings</div>
+      <div style='line-height:1.6;'>
+        <p style='margin:0 0 8px'><b style='color:#b30000'>1. Secular trend dominates.</b>
+        Year 2018–2024 is the top SHAP driver, reflecting progressive land-use
+        intensification - agricultural expansion and deforestation.</p>
+        <p style='margin:0 0 8px'><b style='color:#b30000'>2. Fuel condition drives departures.</b>
+        Dry-season NDVI anomaly confirms below-average greenness systematically
+        increases fire above its long-term baseline.</p>
+        <p style='margin:0 0 8px'><b style='color:#b30000'>3. Development suppresses fire.</b>
+        Nighttime lights show negative partial dependence - higher economic
+        activity correlates with below-baseline fire, suggesting suppression capacity.</p>
+        <p style='margin:0 0 8px'><b style='color:#b30000'>4. Fire drives urban smoke.</b>
+        Active fire count within 250 km explains significant AAI variance
+        (r=0.23) across all 15 cities.</p>
+        <p style='margin:0 0 0'><b style='color:#b30000'>5. Proximity beats population.</b>
+        The most smoke-exposed cities are inland savanna cities - distance to
+        fire source outweighs city population as an exposure determinant.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div style='background:#f5f5f5;padding:6px 14px;border-top:1px solid #ddd;
+              font-size:9px;color:#aaa;'>
+    MODIS MCD64A1 · S5P TROPOMI · WorldPop · ERA5-Land · VIIRS DNB
+  </div>
+
+</div>
+
+<script>
+function hfsTab(name) {
+  ['drivers','exposure','model','countries','findings'].forEach(function(t) {
+    var el=document.getElementById('hfs-tab-'+t);
+    var bt=document.getElementById('hfs-btn-'+t);
+    if(el) el.style.display='none';
+    if(bt){bt.style.background='#f0f0f0';bt.style.color='#444';bt.style.fontWeight='normal';}
+  });
+  var a=document.getElementById('hfs-tab-'+name);
+  var b=document.getElementById('hfs-btn-'+name);
+  if(a) a.style.display='block';
+  if(b){b.style.background='#d73027';b.style.color='white';b.style.fontWeight='bold';}
+}
+</script>
+    
+            <div class="folium-map" id="map_f20df19c82809b505f892fa9031cb74a" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_f20df19c82809b505f892fa9031cb74a = L.map(
+                "map_f20df19c82809b505f892fa9031cb74a",
+                {
+                    center: [-14.0, 33.0],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 5,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_f20df19c82809b505f892fa9031cb74a);
+
+            
+
+        
+    
+            var tile_layer_7edbcbe691e283896c260bc5eefa0060 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_7edbcbe691e283896c260bc5eefa0060.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var tile_layer_e75b93d4538fa77ff129abbf9a42e28f = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_e75b93d4538fa77ff129abbf9a42e28f.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var tile_layer_7cfbd469935e1d659eb01bb2f9cd7ce1 = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "Esri",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_7cfbd469935e1d659eb01bb2f9cd7ce1.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topleft",
+  "title": "Full Screen",
+  "titleCancel": "Exit Full Screen",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var tile_layer_b4476307e434c5e28867b88886dd900c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+            var mini_map_4284c288594f4cb08089eafad509b349 = new L.Control.MiniMap(
+                tile_layer_b4476307e434c5e28867b88886dd900c,
+                {
+  "position": "bottomright",
+  "width": 150,
+  "height": 150,
+  "collapsedWidth": 25,
+  "collapsedHeight": 25,
+  "zoomLevelOffset": -5,
+  "centerFixed": false,
+  "zoomAnimation": false,
+  "toggleDisplay": true,
+  "autoToggleDisplay": false,
+  "minimized": false,
+}
+            );
+            map_f20df19c82809b505f892fa9031cb74a.addControl(mini_map_4284c288594f4cb08089eafad509b349);
+        
+    
+            var mouse_position_455f381b969b2b16b5df0779f22fc418 = new L.Control.MousePosition(
+                {
+  "position": "bottomright",
+  "separator": " : ",
+  "emptyString": "Unavailable",
+  "lngFirst": false,
+  "numDigits": 5,
+  "prefix": "Coords:",
+}
+            );
+            mouse_position_455f381b969b2b16b5df0779f22fc418.options["latFormatter"] =
+                undefined;
+            mouse_position_455f381b969b2b16b5df0779f22fc418.options["lngFormatter"] =
+                undefined;
+            map_f20df19c82809b505f892fa9031cb74a.addControl(mouse_position_455f381b969b2b16b5df0779f22fc418);
+        
+    
+            var measure_control_40aca342081639066e587de3dd7124f4 = new L.Control.Measure(
+                {
+  "position": "topleft",
+  "primaryLengthUnit": "meters",
+  "secondaryLengthUnit": "miles",
+  "primaryAreaUnit": "sqmeters",
+  "secondaryAreaUnit": "acres",
+});
+            map_f20df19c82809b505f892fa9031cb74a.addControl(measure_control_40aca342081639066e587de3dd7124f4);
+
+            // Workaround for using this plugin with Leaflet>=1.8.0
+            // https://github.com/ljagis/leaflet-measure/issues/171
+            L.Control.Measure.include({
+                _setCaptureMarkerIcon: function () {
+                    // disable autopan
+                    this._captureMarker.options.autoPanOnFocus = false;
+                    // default function
+                    this._captureMarker.setIcon(
+                        L.divIcon({
+                            iconSize: this._map.getSize().multiplyBy(2)
+                        })
+                    );
+                },
+            });
+
+        
+    
+            var heat_map_2233484c5b2955391fee544a41059499 = L.heatLayer(
+                [[-17.5, 25.5, 0.2122051815170216], [-16.5, 25.5, 0.3893718760472], [-15.5, 25.5, 0.5548099447460766], [-14.5, 25.5, 0.416815550364096], [-11.5, 25.5, 0.7093949266617912], [-10.5, 25.5, 0.15309942120806355], [-8.5, 25.5, 0.17820682865699777], [-7.5, 25.5, 0.19486134579519607], [-6.5, 25.5, 0.2715487452024782], [-5.5, 25.5, 0.2983386101519466], [-17.5, 26.5, 0.13851459829112855], [-15.5, 26.5, 0.252306583959407], [-14.5, 26.5, 0.0017560935648498973], [-12.5, 26.5, 0.2510788901635503], [-11.5, 26.5, 0.3767758227125604], [-10.5, 26.5, 0.19157886050428571], [-9.5, 26.5, 0.028169158220653218], [-8.5, 26.5, 0.10632940585224142], [-7.5, 26.5, 0.24968655245398497], [-6.5, 26.5, 0.3557624059153727], [-5.5, 26.5, 0.5348649237481184], [-18.5, 27.5, 0.07647695865958366], [-17.5, 27.5, 0.1419207625297536], [-16.5, 27.5, 0.24258878130178232], [-15.5, 27.5, 0.19464391882494922], [-14.5, 27.5, 0.24940833152278366], [-12.5, 27.5, 0.20790909177243386], [-11.5, 27.5, 0.18867360709148165], [-10.5, 27.5, 0.08806811799071132], [-9.5, 27.5, 0.1335198242518877], [-8.5, 27.5, 0.20913419004203587], [-6.5, 27.5, 0.1974047316504751], [-5.5, 27.5, 0.31691108044646715], [-19.5, 28.5, 0.08269013427834979], [-16.5, 28.5, 0.2794051629639151], [-15.5, 28.5, 0.27989572423535414], [-14.5, 28.5, 0.2551731351389239], [-13.5, 28.5, 0.25412729222191704], [-12.5, 28.5, 0.14151311610228015], [-9.5, 28.5, 0.05554698133753537], [-6.5, 28.5, 0.43903087998003754], [-5.5, 28.5, 0.5799741090056914], [-18.5, 29.5, 0.23853630025534867], [-17.5, 29.5, 0.25219114134442006], [-16.5, 29.5, 0.2354222232967614], [-15.5, 29.5, 0.590082990706799], [-14.5, 29.5, 0.7046154253707703], [-13.5, 29.5, 0.222732902614024], [-11.5, 29.5, 0.23662556810001154], [-10.5, 29.5, 0.23949344057872216], [-8.5, 29.5, 0.14569576165633397], [-7.5, 29.5, 0.3859584915604501], [-6.5, 29.5, 0.15499665580876174], [-5.5, 29.5, 0.2941188794631613], [-24.5, 30.5, 0.31859068343069963], [-23.5, 30.5, 0.2515959288210618], [-17.5, 30.5, 0.2618558256594707], [-16.5, 30.5, 0.24791959619033377], [-15.5, 30.5, 0.3643415142504747], [-14.5, 30.5, 0.6742356609087097], [-13.5, 30.5, 0.48330843201802226], [-12.5, 30.5, 0.06702712964835139], [-11.5, 30.5, 0.18690918795330522], [-10.5, 30.5, 0.3104827358224307], [-7.5, 30.5, 0.3313750815282813], [-6.5, 30.5, 0.2839280970790406], [-5.5, 30.5, 0.043576328711868006], [-22.5, 31.5, 0.36084298977533164], [-21.5, 31.5, 0.21491642737031297], [-20.5, 31.5, 0.21742897228909674], [-17.5, 31.5, 0.22022151116824998], [-15.5, 31.5, 0.3370943957657644], [-14.5, 31.5, 0.20215383707444792], [-13.5, 31.5, 0.3001831435377584], [-12.5, 31.5, 0.5727731827936208], [-11.5, 31.5, 0.37578211443579884], [-10.5, 31.5, 0.4398979445476922], [-9.5, 31.5, 0.46092106982977793], [-8.5, 31.5, 0.25130775145656414], [-7.5, 31.5, 0.21769487860016642], [-6.5, 31.5, 0.09174329011395806], [-5.5, 31.5, 0.15497887808742114], [-23.5, 32.5, 0.26826524319714123], [-21.5, 32.5, 0.42169736064703195], [-20.5, 32.5, 0.23488891007999593], [-19.5, 32.5, 0.19467749534685028], [-18.5, 32.5, 0.16454637381972662], [-16.5, 32.5, 0.23446893385882886], [-15.5, 32.5, 0.2770144400318059], [-14.5, 32.5, 0.1338578242453511], [-13.5, 32.5, 0.19186858146716423], [-12.5, 32.5, 0.6499032251538617], [-11.5, 32.5, 0.8146817335971623], [-10.5, 32.5, 0.46757144959109503], [-9.5, 32.5, 0.2717547137759451], [-8.5, 32.5, 0.21614976313159415], [-7.5, 32.5, 0.4149365437702859], [-6.5, 32.5, 0.3966879091468558], [-5.5, 32.5, 0.13409769426716298], [-24.5, 33.5, 0.43833498604180954], [-23.5, 33.5, 0.3328473316582619], [-22.5, 33.5, 0.1445096247178803], [-21.5, 33.5, 0.7427777284827541], [-20.5, 33.5, 0.3503290005423325], [-19.5, 33.5, 0.046477122208281846], [-17.5, 33.5, 0.3645744220637349], [-16.5, 33.5, 0.02551567273429527], [-15.5, 33.5, 0.5562581344942351], [-14.5, 33.5, 0.18765950610944152], [-13.5, 33.5, 0.21795626557493855], [-12.5, 33.5, 0.2409992971658379], [-11.5, 33.5, 0.2392071054953995], [-10.5, 33.5, 0.4904586643924429], [-9.5, 33.5, 0.31711103433044524], [-8.5, 33.5, 0.2893730142321479], [-7.5, 33.5, 0.6140226226221063], [-6.5, 33.5, 0.5860115211384773], [-5.5, 33.5, 0.16153070517481224], [-24.5, 34.5, 0.22748132025941561], [-23.5, 34.5, 0.4167216084928346], [-22.5, 34.5, 0.6810142626903583], [-21.5, 34.5, 0.6049291620636859], [-20.5, 34.5, 0.2910251333304016], [-19.5, 34.5, 0.2374098108551612], [-18.5, 34.5, 0.13147077372551538], [-17.5, 34.5, 0.3642932177107165], [-16.5, 34.5, 0.4845112319816665], [-15.5, 34.5, 0.3361402144942605], [-14.5, 34.5, 0.2811418087261892], [-13.5, 34.5, 0.21644368353256543], [-12.5, 34.5, 0.2079474551559273], [-11.5, 34.5, 0.17927778372488082], [-10.5, 34.5, 0.3188150872120288], [-9.5, 34.5, 0.47282746262063335], [-8.5, 34.5, 0.25199770098788704], [-7.5, 34.5, 0.23486562636260622], [-6.5, 34.5, 0.09822221489483578], [-5.5, 34.5, 0.1937471598650245], [-23.5, 35.5, 0.23096410689390964], [-22.5, 35.5, 0.2734941104189016], [-21.5, 35.5, 0.08894829413482833], [-19.5, 35.5, 0.2697394753295908], [-18.5, 35.5, 0.062910874217693], [-17.5, 35.5, 0.6279114055091742], [-16.5, 35.5, 0.581526813550778], [-15.5, 35.5, 0.24623363023077358], [-14.5, 35.5, 0.29281169688550174], [-11.5, 35.5, 0.3220256934470984], [-10.5, 35.5, 0.40256849450110216], [-9.5, 35.5, 0.042524827072711366], [-8.5, 35.5, 0.19945902619096434], [-5.5, 35.5, 0.22493760745613448], [-18.5, 36.5, 0.3433369037493995], [-17.5, 36.5, 0.3137831296856629], [-16.5, 36.5, 0.07848199084286953], [-15.5, 36.5, 0.46170689361472195], [-14.5, 36.5, 0.20967251903834447], [-13.5, 36.5, 0.115061045651518], [-12.5, 36.5, 0.06795643313250403], [-11.5, 36.5, 0.5567180641004094], [-10.5, 36.5, 0.4068982960892048], [-9.5, 36.5, 0.31120750701958166], [-8.5, 36.5, 0.07434556870730663], [-7.5, 36.5, 0.043656959847881725], [-6.5, 36.5, 0.21386300673719794], [-17.5, 37.5, 0.2252579047863402], [-16.5, 37.5, 0.07951551218533527], [-15.5, 37.5, 0.441885877382883], [-14.5, 37.5, 0.45200964139378047], [-12.5, 37.5, 0.6563279869579908], [-11.5, 37.5, 0.4507565342885712], [-10.5, 37.5, 0.6596828664394688], [-9.5, 37.5, 0.1537147159526451], [-8.5, 37.5, 0.2392645695069642], [-7.5, 37.5, 0.07151503390659479], [-6.5, 37.5, 0.2287695184132541], [-5.5, 37.5, 0.08049223575098426], [-15.5, 38.5, 0.09285374132834719], [-14.5, 38.5, 0.28302370702003715], [-13.5, 38.5, 0.15817080526605984], [-12.5, 38.5, 0.7260337986610766], [-11.5, 38.5, 0.6481350135966948], [-10.5, 38.5, 0.5972060737594308], [-9.5, 38.5, 0.8021796540878602], [-8.5, 38.5, 0.4004053120230909], [-7.5, 38.5, 0.27399443944165325], [-6.5, 38.5, 0.09730146313197344], [-5.5, 38.5, 0.16105060370317772], [-16.5, 39.5, 0.23236145418166523], [-15.5, 39.5, 0.08258416601384362], [-14.5, 39.5, 0.20253703914025487], [-13.5, 39.5, 0.24803044347009806], [-12.5, 39.5, 0.0018600147353569486], [-11.5, 39.5, 0.12611131271039652], [-10.5, 39.5, 0.4701441706798343], [-9.5, 39.5, 0.08956342644481023], [-8.5, 39.5, 0.19927949538569195], [-7.5, 39.5, 0.14347042669243887], [-17.5, 25.5, 0.3747522999465204], [-16.5, 25.5, 1.0], [-15.5, 25.5, 0.9036503772537416], [-14.5, 25.5, 0.909069041688849], [-13.5, 25.5, 0.08187738435077067], [-11.5, 25.5, 0.5676735626845617], [-10.5, 25.5, 0.170464481389601], [-9.5, 25.5, 0.8356717698972609], [-8.5, 25.5, 0.48167777164687614], [-7.5, 25.5, 0.4005122170186001], [-6.5, 25.5, 0.40528842364089257], [-5.5, 25.5, 0.4066930140674186], [-15.5, 26.5, 0.7594698275370974], [-14.5, 26.5, 0.7861704399182743], [-13.5, 26.5, 0.04292514857659393], [-12.5, 26.5, 0.4092998086782538], [-11.5, 26.5, 0.5189875058796055], [-10.5, 26.5, 0.4246915784390515], [-9.5, 26.5, 0.7383202658500496], [-8.5, 26.5, 0.7785081026185877], [-7.5, 26.5, 0.8944561255306362], [-6.5, 26.5, 0.7832715409663885], [-5.5, 26.5, 0.7382359192697259], [-18.5, 27.5, 0.3063574666579894], [-17.5, 27.5, 0.428470942611278], [-16.5, 27.5, 0.40690680463218953], [-15.5, 27.5, 0.39050344523005753], [-14.5, 27.5, 0.4501539843248645], [-13.5, 27.5, 0.03901589436431811], [-12.5, 27.5, 0.22599212877020503], [-11.5, 27.5, 0.19264355160229116], [-10.5, 27.5, 0.47333604400555734], [-9.5, 27.5, 0.6987007473070102], [-8.5, 27.5, 0.5794052697134052], [-7.5, 27.5, 0.8426165186110292], [-6.5, 27.5, 0.9370992615575604], [-5.5, 27.5, 0.5410567073714199], [-19.5, 28.5, 0.2546637415103784], [-16.5, 28.5, 0.38131444453896335], [-15.5, 28.5, 0.40384208121021603], [-14.5, 28.5, 0.48834839516893064], [-13.5, 28.5, 0.26447311690323777], [-12.5, 28.5, 0.14121587979676312], [-10.5, 28.5, 0.3409911032904521], [-9.5, 28.5, 0.49895142784814056], [-8.5, 28.5, 0.3842232850113497], [-7.5, 28.5, 0.6206026057722842], [-6.5, 28.5, 0.7608116738614565], [-5.5, 28.5, 0.4928153536785583], [-18.5, 29.5, 0.33180955186955474], [-17.5, 29.5, 0.5382648208745529], [-16.5, 29.5, 0.3830651655795715], [-15.5, 29.5, 0.9408491105766369], [-14.5, 29.5, 0.7970768854774923], [-13.5, 29.5, 0.3472477252753613], [-11.5, 29.5, 0.287655169947711], [-10.5, 29.5, 0.37515832440601893], [-9.5, 29.5, 0.04991202675915858], [-8.5, 29.5, 0.3115612973300161], [-7.5, 29.5, 0.5777684604059893], [-6.5, 29.5, 0.31586614775949845], [-5.5, 29.5, 0.3629993071687877], [-24.5, 30.5, 0.2696236509465521], [-23.5, 30.5, 0.3436326157459831], [-17.5, 30.5, 0.3205975827816436], [-16.5, 30.5, 0.48074340364985363], [-15.5, 30.5, 0.7825448639201513], [-14.5, 30.5, 0.875555893895929], [-13.5, 30.5, 0.6473585047411008], [-12.5, 30.5, 0.16022613862623472], [-11.5, 30.5, 0.25745907162094883], [-10.5, 30.5, 0.5279452496003131], [-8.5, 30.5, 0.3343740602272678], [-7.5, 30.5, 0.348778315006608], [-6.5, 30.5, 0.5944706008035704], [-5.5, 30.5, 0.5573698775958038], [-22.5, 31.5, 0.2954907554570629], [-20.5, 31.5, 0.311627114607308], [-17.5, 31.5, 0.2939576944697826], [-15.5, 31.5, 0.6809876165893158], [-14.5, 31.5, 0.31748182896041116], [-13.5, 31.5, 0.7316587805093705], [-12.5, 31.5, 0.2903425402629469], [-11.5, 31.5, 0.592736377343691], [-10.5, 31.5, 0.6239033583823042], [-9.5, 31.5, 0.5750270335976034], [-8.5, 31.5, 0.3184266365668827], [-7.5, 31.5, 0.4979401438496696], [-6.5, 31.5, 0.8829075930686174], [-5.5, 31.5, 0.8995234127639482], [-23.5, 32.5, 0.2844738169552177], [-21.5, 32.5, 0.5325281464040007], [-20.5, 32.5, 0.09890185616713505], [-19.5, 32.5, 0.14280844481775343], [-18.5, 32.5, 0.23435560330454616], [-16.5, 32.5, 0.34216566967846856], [-15.5, 32.5, 0.35851375614632447], [-13.5, 32.5, 0.2855161406673701], [-12.5, 32.5, 0.7633984851403796], [-11.5, 32.5, 0.8068055091263936], [-10.5, 32.5, 0.6062389754788419], [-9.5, 32.5, 0.4813206927289718], [-8.5, 32.5, 0.32190098592406013], [-7.5, 32.5, 0.8456542596920684], [-6.5, 32.5, 0.8278916434761863], [-5.5, 32.5, 0.7335769431541703], [-24.5, 33.5, 0.4180146465694192], [-23.5, 33.5, 0.3881892829405438], [-22.5, 33.5, 0.33581346611068463], [-21.5, 33.5, 0.7874980969008317], [-20.5, 33.5, 0.23613556122776205], [-19.5, 33.5, 0.03362939871022156], [-18.5, 33.5, 0.1052321665271645], [-17.5, 33.5, 0.5736674110396125], [-16.5, 33.5, 0.09167598961621204], [-15.5, 33.5, 0.27188472537750785], [-14.5, 33.5, 0.10569835116174614], [-13.5, 33.5, 0.1854419621650759], [-12.5, 33.5, 0.18196786425242453], [-11.5, 33.5, 0.4282304344405768], [-10.5, 33.5, 0.7292339142367937], [-9.5, 33.5, 0.42690396446609324], [-8.5, 33.5, 0.42815272356884304], [-7.5, 33.5, 0.9338707773025501], [-6.5, 33.5, 0.9909077897260623], [-5.5, 33.5, 0.4845723197231241], [-24.5, 34.5, 0.4112554476327204], [-23.5, 34.5, 0.6339593555260283], [-22.5, 34.5, 0.9112315983769063], [-21.5, 34.5, 0.8022009038617895], [-20.5, 34.5, 0.36874565358039757], [-19.5, 34.5, 0.5138121978808727], [-17.5, 34.5, 0.298772089258683], [-16.5, 34.5, 0.11349923513872899], [-15.5, 34.5, 0.17832718157289384], [-14.5, 34.5, 0.1698383391554427], [-13.5, 34.5, 0.2480424882278778], [-12.5, 34.5, 0.18803389312234484], [-11.5, 34.5, 0.31183813512573016], [-10.5, 34.5, 0.32366478874833776], [-9.5, 34.5, 0.34701538596163106], [-8.5, 34.5, 0.5066350734212848], [-7.5, 34.5, 0.6091328797257699], [-6.5, 34.5, 0.5615281581028821], [-5.5, 34.5, 0.38227143588889256], [-23.5, 35.5, 0.32638412929221133], [-22.5, 35.5, 0.2926322292682629], [-21.5, 35.5, 0.337809600992929], [-19.5, 35.5, 0.3563772748105395], [-17.5, 35.5, 0.014519526001988957], [-16.5, 35.5, 0.22075588851782377], [-15.5, 35.5, 0.2688610023543307], [-14.5, 35.5, 0.15554997617220356], [-12.5, 35.5, 0.01517422483006343], [-11.5, 35.5, 0.8569689606326959], [-10.5, 35.5, 0.5779268532532003], [-8.5, 35.5, 0.23754844566228814], [-5.5, 35.5, 0.4467293818239882], [-18.5, 36.5, 0.1283902013868002], [-15.5, 36.5, 0.5845355489628155], [-14.5, 36.5, 0.12124908204051875], [-11.5, 36.5, 0.760079036901492], [-10.5, 36.5, 0.5682878812394108], [-6.5, 36.5, 0.3439519427132803], [-17.5, 37.5, 0.049013511953546446], [-15.5, 37.5, 0.5205341884147358], [-14.5, 37.5, 0.46809418431533084], [-12.5, 37.5, 0.8138828264397215], [-11.5, 37.5, 0.6349388626678762], [-10.5, 37.5, 0.5910689576621456], [-9.5, 37.5, 0.7206987240037058], [-8.5, 37.5, 0.30130863700565874], [-6.5, 37.5, 0.11325023174796531], [-5.5, 37.5, 0.11539696725340592], [-15.5, 38.5, 0.04705857012316664], [-14.5, 38.5, 0.4540829992275871], [-13.5, 38.5, 0.08097400968261483], [-12.5, 38.5, 0.7741250573899533], [-11.5, 38.5, 0.7592003470189284], [-10.5, 38.5, 0.4217499734622321], [-9.5, 38.5, 0.958813151983528], [-8.5, 38.5, 0.5255907035164988], [-7.5, 38.5, 0.3120744334941488], [-6.5, 38.5, 0.0602172651163238], [-5.5, 38.5, 0.18731078259823244], [-16.5, 39.5, 0.19255287074793934], [-15.5, 39.5, 0.12065608520918075], [-14.5, 39.5, 0.12553718021170424], [-13.5, 39.5, 0.2008583381631221], [-10.5, 39.5, 0.5017450222097727], [-9.5, 39.5, 0.16312711594710883], [-8.5, 39.5, 0.19168716188193105], [-7.5, 39.5, 0.14082054422269552], [-16.5, 25.5, 0.1889258262316607], [-15.5, 25.5, 0.021631785547246124], [-14.5, 25.5, 0.1333713997892004], [-12.5, 25.5, 0.025694524750607347], [-10.5, 25.5, 0.05396650814994883], [-8.5, 25.5, 0.09776975693935797], [-14.5, 26.5, 0.1048865673453193], [-12.5, 26.5, 0.13209965521732173], [-10.5, 26.5, 0.19404235997618863], [-9.5, 26.5, 0.10516676348697399], [-14.5, 27.5, 0.01703560483643534], [-12.5, 27.5, 0.06132096281788781], [-11.5, 27.5, 0.046843079845086975], [-10.5, 27.5, 0.04009150755360575], [-13.5, 28.5, 0.042923552119914214], [-12.5, 28.5, 0.09251803702260701], [-11.5, 28.5, 0.08527278479983555], [-10.5, 28.5, 0.01674859911568766], [-9.5, 28.5, 0.039862644262642286], [-5.5, 28.5, 0.01456702450169247], [-10.5, 29.5, 0.002090639800917257], [-9.5, 29.5, 0.015328117831345104], [-7.5, 29.5, 0.10371297830986058], [-13.5, 30.5, 0.06882453774377582], [-12.5, 30.5, 0.06953733810902683], [-9.5, 30.5, 0.039441245501624506], [-5.5, 30.5, 0.05797699010305352], [-11.5, 31.5, 0.10353163957764318], [-14.5, 32.5, 0.04961626016434194], [-11.5, 32.5, 0.07377328914831766], [-8.5, 32.5, 0.05227513357444391], [-7.5, 32.5, 0.2364475838720375], [-6.5, 32.5, 0.05328366300718431], [-20.5, 33.5, 0.05925316008033611], [-19.5, 33.5, 0.04440273776748385], [-18.5, 33.5, 0.2546724768696079], [-10.5, 33.5, 0.0049324222741449625], [-8.5, 33.5, 0.23911742791619414], [-7.5, 33.5, 0.19946838292788072], [-6.5, 33.5, 0.20704197651723394], [-19.5, 34.5, 0.10091780666797903], [-18.5, 34.5, 0.07263682471167236], [-17.5, 34.5, 0.025355437935285923], [-15.5, 34.5, 0.02243040529937787], [-13.5, 34.5, 0.013981859002351804], [-12.5, 34.5, 0.02966350415565627], [-7.5, 34.5, 0.36400626042394585], [-6.5, 34.5, 0.10623839477994255], [-5.5, 34.5, 0.027436947257694803], [-18.5, 35.5, 0.12245730713858695], [-17.5, 35.5, 0.10910880329177751], [-16.5, 35.5, 0.003361188561148673], [-14.5, 35.5, 0.04238701667335919], [-13.5, 35.5, 0.1456051825900957], [-8.5, 35.5, 0.14610046385656625], [-5.5, 35.5, 0.07270682346590894], [-17.5, 36.5, 0.14283788277174256], [-16.5, 36.5, 0.13930577093855068], [-14.5, 36.5, 0.04298102245451382], [-13.5, 36.5, 0.14609690976341058], [-12.5, 36.5, 0.38366595924283], [-8.5, 36.5, 0.022883049391579], [-6.5, 36.5, 0.01485854947484813], [-16.5, 37.5, 0.162069969495496], [-14.5, 37.5, 0.024400560635759974], [-13.5, 37.5, 0.25397230756684513], [-12.5, 37.5, 0.1584421068115429], [-11.5, 37.5, 0.15481518376279232], [-8.5, 37.5, 0.31862543719486414], [-7.5, 37.5, 0.19505189724561695], [-6.5, 37.5, 0.18763226246598763], [-5.5, 37.5, 0.19840473352018403], [-15.5, 38.5, 0.13651461307257876], [-14.5, 38.5, 0.16229412612975536], [-13.5, 38.5, 0.17424682103399639], [-12.5, 38.5, 0.23972811821088075], [-11.5, 38.5, 0.1182577822119207], [-8.5, 38.5, 0.013832973487712556], [-6.5, 38.5, 0.14052198915658828], [-5.5, 38.5, 0.2458213568420846], [-15.5, 39.5, 0.18125675486535905], [-14.5, 39.5, 0.22959898232220471], [-13.5, 39.5, 0.1187412882082784], [-12.5, 39.5, 0.1881114899997256], [-11.5, 39.5, 0.00735405713719049], [-9.5, 25.5, 0.0950583512068882], [-8.5, 25.5, 0.018074709578383058], [-7.5, 25.5, 0.017884700861435197], [-6.5, 25.5, 0.0767441096417685], [-8.5, 26.5, 0.05367822187301928], [-7.5, 26.5, 0.06664428221423799], [-6.5, 26.5, 0.10133124437088514], [-10.5, 27.5, 0.19825866181763116], [-9.5, 27.5, 0.07572342568086879], [-8.5, 27.5, 0.17553505792057414], [-7.5, 27.5, 0.25934693582812945], [-6.5, 27.5, 0.10813971610759363], [-12.5, 28.5, 0.0274465474302444], [-11.5, 28.5, 0.05383573930683827], [-10.5, 28.5, 0.2840144226440919], [-9.5, 28.5, 0.174795684457923], [-8.5, 28.5, 0.2200104601722869], [-7.5, 28.5, 0.20023673828929403], [-5.5, 28.5, 0.09595424004791425], [-13.5, 29.5, 0.02006796866397121], [-10.5, 29.5, 0.007609937493653722], [-9.5, 29.5, 0.3316197423720708], [-8.5, 29.5, 0.18985812610003586], [-24.5, 30.5, 0.05862722384043931], [-23.5, 30.5, 0.13197977914235312], [-9.5, 30.5, 0.21523370514329454], [-8.5, 30.5, 0.27823333966394936], [-7.5, 30.5, 0.03936583323419905], [-22.5, 31.5, 0.01503768019031249], [-8.5, 31.5, 0.09322298875060464], [-7.5, 31.5, 0.0461579248107016], [-6.5, 31.5, 0.16280645255350207], [-5.5, 31.5, 0.013833052480939722], [-15.5, 32.5, 0.033843257838321546], [-9.5, 32.5, 0.02611391938517433], [-8.5, 32.5, 0.06599475313446473], [-7.5, 32.5, 0.162356518752339], [-19.5, 33.5, 0.018400328071380433], [-10.5, 33.5, 0.1116037952541569], [-9.5, 33.5, 0.12296961992861416], [-8.5, 33.5, 0.17464022290628223], [-7.5, 33.5, 0.0702790516451352], [-19.5, 34.5, 0.02842775558134101], [-11.5, 34.5, 0.04866614146240418], [-10.5, 34.5, 0.09044737567269606], [-9.5, 34.5, 0.18875360833503696], [-8.5, 34.5, 0.04337670860220919], [-7.5, 34.5, 0.17577203765015126], [-5.5, 34.5, 0.07082617839324024], [-17.5, 35.5, 0.003235179273388581], [-16.5, 35.5, 0.11820183001732824], [-11.5, 35.5, 0.08376068435467883], [-10.5, 35.5, 0.060714720479677915], [-9.5, 35.5, 0.3440569882793281], [-8.5, 35.5, 0.2830924953794762], [-5.5, 35.5, 0.0677770330544061], [-17.5, 36.5, 0.23905604029405123], [-16.5, 36.5, 0.13133076388800066], [-12.5, 36.5, 0.05040863378322532], [-9.5, 36.5, 0.4167200869190893], [-8.5, 36.5, 0.2977683576379683], [-7.5, 36.5, 0.26971322421213256], [-6.5, 36.5, 0.09484232991558866], [-16.5, 37.5, 0.06500487403321697], [-9.5, 37.5, 0.34663597898270715], [-8.5, 37.5, 0.33323134751330225], [-7.5, 37.5, 0.39700583630314296], [-6.5, 37.5, 0.21604101717262833], [-5.5, 37.5, 0.2051839863604768], [-16.5, 38.5, 0.06488654562205157], [-10.5, 38.5, 0.009765611402980726], [-9.5, 38.5, 0.13505127377692241], [-8.5, 38.5, 0.020568504106182425], [-7.5, 38.5, 0.14266816794365178], [-6.5, 38.5, 0.07218763483338182], [-5.5, 38.5, 0.23031045159278982], [-11.5, 39.5, 0.010402064569874154], [-10.5, 39.5, 0.02793638535998857], [-17.5, 25.5, 0.38681652834109637], [-16.5, 25.5, 0.5239834984889941], [-15.5, 25.5, 0.6822404381914234], [-14.5, 25.5, 0.5848792942499067], [-13.5, 25.5, 0.6336676992885428], [-12.5, 25.5, 0.7457621571200486], [-11.5, 25.5, 0.3387234861500232], [-10.5, 25.5, 0.2991116203556137], [-9.5, 25.5, 0.07463008671646985], [-7.5, 25.5, 0.2692610635858843], [-6.5, 25.5, 0.043795304973967525], [-5.5, 25.5, 0.09960436913923423], [-15.5, 26.5, 0.265897318027932], [-14.5, 26.5, 0.6477465553016205], [-13.5, 26.5, 0.6426149063097598], [-12.5, 26.5, 0.4268725940986906], [-11.5, 26.5, 0.3296663068722667], [-10.5, 26.5, 0.3790801834241346], [-9.5, 26.5, 0.3600287741800774], [-8.5, 26.5, 0.03142151222150847], [-7.5, 26.5, 0.047432951316119736], [-6.5, 26.5, 0.16109138228877504], [-5.5, 26.5, 0.16921976008474596], [-16.5, 27.5, 0.5553562954045972], [-15.5, 27.5, 0.08611104693177268], [-14.5, 27.5, 0.3206437972349346], [-13.5, 27.5, 0.5233010019474508], [-12.5, 27.5, 0.5084755661418737], [-11.5, 27.5, 0.5091325331003895], [-10.5, 27.5, 0.4510802523941965], [-9.5, 27.5, 0.0907720477742576], [-8.5, 27.5, 0.3335410059799681], [-7.5, 27.5, 0.2022545360797436], [-6.5, 27.5, 0.12531402981701784], [-5.5, 27.5, 0.19625916805279423], [-16.5, 28.5, 0.5629785953490565], [-15.5, 28.5, 0.5145280675730849], [-14.5, 28.5, 0.458475939698055], [-13.5, 28.5, 0.565001578998409], [-12.5, 28.5, 0.617847490952774], [-11.5, 28.5, 0.6222306173347364], [-10.5, 28.5, 0.3190044608850173], [-9.5, 28.5, 0.23513199534480436], [-8.5, 28.5, 0.2936990766855058], [-7.5, 28.5, 0.09698167881422583], [-6.5, 28.5, 0.06577906395006607], [-5.5, 28.5, 0.13493514815507346], [-17.5, 29.5, 0.38171749255912496], [-16.5, 29.5, 0.41260264705999733], [-15.5, 29.5, 0.5482925606941523], [-14.5, 29.5, 0.5949414513459064], [-13.5, 29.5, 0.43546445684343044], [-12.5, 29.5, 0.5013318234244278], [-11.5, 29.5, 0.15306118618705938], [-10.5, 29.5, 0.22227658225305105], [-9.5, 29.5, 0.3268633478274431], [-8.5, 29.5, 0.28433735686480044], [-5.5, 29.5, 0.03243595810330379], [-24.5, 30.5, 0.16549268269535775], [-23.5, 30.5, 0.1880776942412985], [-17.5, 30.5, 0.3258588800335985], [-16.5, 30.5, 0.4854285999608097], [-15.5, 30.5, 0.4054978869599775], [-14.5, 30.5, 0.4406793120612342], [-13.5, 30.5, 0.6774991638670201], [-12.5, 30.5, 0.4345983834537388], [-11.5, 30.5, 0.21810775171936025], [-10.5, 30.5, 0.24787515031619337], [-9.5, 30.5, 0.3600148380726322], [-8.5, 30.5, 0.06951797726493282], [-7.5, 30.5, 0.051855970836613446], [-6.5, 30.5, 0.009633040500828789], [-5.5, 30.5, 0.08697536846917064], [-22.5, 31.5, 0.0920677935235985], [-17.5, 31.5, 0.3934371443233298], [-15.5, 31.5, 0.3419804070972243], [-14.5, 31.5, 0.12892138756282923], [-13.5, 31.5, 0.4583165362571671], [-12.5, 31.5, 0.8579955667407232], [-11.5, 31.5, 0.3348872110586258], [-10.5, 31.5, 0.18794043798819818], [-9.5, 31.5, 0.0723958676183444], [-6.5, 31.5, 0.16171369662457546], [-5.5, 31.5, 0.06746881408947251], [-20.5, 32.5, 0.04988981117811167], [-19.5, 32.5, 0.37560700094743416], [-18.5, 32.5, 0.45658034405715003], [-15.5, 32.5, 0.4027016433121061], [-14.5, 32.5, 0.5841231781260648], [-13.5, 32.5, 0.37025369994921487], [-12.5, 32.5, 0.28881740270936], [-11.5, 32.5, 0.48130980596210354], [-10.5, 32.5, 0.3006162812918622], [-7.5, 32.5, 0.06562698516462309], [-24.5, 33.5, 0.07757737411991217], [-20.5, 33.5, 0.044756556052902935], [-19.5, 33.5, 0.24817115480465793], [-18.5, 33.5, 0.6724798416996813], [-17.5, 33.5, 0.3267996119388128], [-16.5, 33.5, 0.19582259287107973], [-15.5, 33.5, 0.7475090519808231], [-14.5, 33.5, 0.4283855571960007], [-13.5, 33.5, 0.3162887177901912], [-12.5, 33.5, 0.2871035054350311], [-11.5, 33.5, 0.3582125978719053], [-10.5, 33.5, 0.15979423041540305], [-9.5, 33.5, 0.017753840143881237], [-8.5, 33.5, 0.03349968873505197], [-7.5, 33.5, 0.05010862564153892], [-24.5, 34.5, 0.011887389937042412], [-21.5, 34.5, 0.0518887388563741], [-19.5, 34.5, 0.0905462446663647], [-18.5, 34.5, 0.3960097385381704], [-17.5, 34.5, 0.3580360562218058], [-16.5, 34.5, 0.6114045150011149], [-15.5, 34.5, 0.7073007486418217], [-14.5, 34.5, 0.34353713904839117], [-13.5, 34.5, 0.4064767989961953], [-12.5, 34.5, 0.23064450971548292], [-11.5, 34.5, 0.17687263601312836], [-10.5, 34.5, 0.012100189248854245], [-9.5, 34.5, 0.08148364143273631], [-5.5, 34.5, 0.02981670491992977], [-18.5, 35.5, 0.34670234028429386], [-17.5, 35.5, 0.7659735790455025], [-16.5, 35.5, 0.735451455080585], [-15.5, 35.5, 0.4451332034182781], [-14.5, 35.5, 0.4121941292675347], [-13.5, 35.5, 0.5309999329725704], [-12.5, 35.5, 0.5620607854799465], [-11.5, 35.5, 0.3373044878540612], [-10.5, 35.5, 0.2419088872401683], [-9.5, 35.5, 0.08983399010496936], [-8.5, 35.5, 0.12132426341005093], [-18.5, 36.5, 0.021181894175475603], [-17.5, 36.5, 0.7495876171084641], [-16.5, 36.5, 0.8539247364212037], [-15.5, 36.5, 0.5480121740103818], [-14.5, 36.5, 0.5874957675018506], [-13.5, 36.5, 0.9106071525057918], [-12.5, 36.5, 0.796271093316799], [-11.5, 36.5, 0.3443483947663603], [-10.5, 36.5, 0.2909065287704576], [-9.5, 36.5, 0.08810054447095246], [-8.5, 36.5, 0.15054771633219477], [-7.5, 36.5, 0.22097979177699986], [-6.5, 36.5, 0.0555272608695606], [-17.5, 37.5, 0.3584044656147823], [-16.5, 37.5, 0.8445759524312573], [-15.5, 37.5, 0.6190159237657135], [-14.5, 37.5, 0.5984394288155215], [-13.5, 37.5, 0.7055808625523056], [-12.5, 37.5, 0.1975104976062145], [-11.5, 37.5, 0.33417594599981193], [-10.5, 37.5, 0.18883991903309344], [-9.5, 37.5, 0.15422276671554527], [-8.5, 37.5, 0.16713590028672212], [-7.5, 37.5, 0.22415886884380565], [-6.5, 37.5, 0.1536165304289826], [-5.5, 37.5, 0.1480512259422764], [-16.5, 38.5, 0.6250340628918521], [-15.5, 38.5, 0.8025498573014263], [-14.5, 38.5, 0.58518076978426], [-13.5, 38.5, 0.31683880375456563], [-12.5, 38.5, 0.062361237973441945], [-10.5, 38.5, 0.11542083641702422], [-8.5, 38.5, 0.16987367889152605], [-7.5, 38.5, 0.11315524318661907], [-5.5, 38.5, 0.16542559291821815], [-16.5, 39.5, 0.31877943496816846], [-15.5, 39.5, 0.7067130655714833], [-14.5, 39.5, 0.45696949831343653], [-13.5, 39.5, 0.09550274478895258], [-12.5, 39.5, 0.18802254037327384], [-11.5, 39.5, 0.13240077657484947], [-10.5, 39.5, 0.08119900458891025], [-9.5, 39.5, 0.0350508919585796], [-15.5, 25.5, 0.0356508402742591], [-14.5, 25.5, 0.2013151190055224], [-13.5, 25.5, 0.15727508874047103], [-12.5, 25.5, 0.10022031840474753], [-14.5, 26.5, 0.1530171643169497], [-13.5, 26.5, 0.15516101476027858], [-13.5, 27.5, 0.15373303022964094], [-12.5, 27.5, 0.02583708233710046], [-15.5, 29.5, 0.03319787326192282], [-12.5, 29.5, 0.029807466364900174], [-13.5, 30.5, 0.17381376873234536], [-13.5, 31.5, 0.09143086829579486], [-19.5, 33.5, 0.03670536331737838]],
+                {
+  "minOpacity": 0.3,
+  "maxZoom": 18,
+  "radius": 35,
+  "blur": 20,
+  "gradient": {
+  0.2: "#ffffcc",
+  0.5: "#fd8d3c",
+  0.75: "#e31a1c",
+  1.0: "#67000d",
+},
+}
+            );
+        
+    
+            heat_map_2233484c5b2955391fee544a41059499.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var feature_group_f224cbbef0401c5212ad682035cedd25 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_ae513eac919bb8e3541f47653850013b = L.circleMarker(
+                [-6.79, 39.29],
+                {"bubblingMouseEvents": true, "color": "#fd8d3c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fd8d3c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 38.0, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_eba619e9e4ff8f508ddf1dcb577a6449 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_0cfed38dd114bfa46d8fa803f2871adb = $(`<div id="html_0cfed38dd114bfa46d8fa803f2871adb" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#fd8d3c'>Dar es Salaam</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Tanzania<br>             <b>Urban Pop (2020):</b> 5.63 million<br>             <b>Cumulative PEI (2018–2024):</b> 97.740<br>             <b>Peak-season mean AAI:</b> -0.799<br>             <b>Exposure Rank:</b>             <span style='color:#fd8d3c;font-weight:bold'>#1 of 15</span>             </div></div>`)[0];
+                popup_eba619e9e4ff8f508ddf1dcb577a6449.setContent(html_0cfed38dd114bfa46d8fa803f2871adb);
+            
+        
+
+        circle_marker_ae513eac919bb8e3541f47653850013b.bindPopup(popup_eba619e9e4ff8f508ddf1dcb577a6449)
+        ;
+
+        
+    
+    
+            circle_marker_ae513eac919bb8e3541f47653850013b.bindTooltip(
+                `<div>
+                     Dar es Salaam | PEI=97.74 | Rank #1
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0f634fc6c0b3b9f018a00769dd445d36 = L.circleMarker(
+                [-15.42, 28.28],
+                {"bubblingMouseEvents": true, "color": "#e31a1c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e31a1c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 23.060244851469946, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_b47ce8dfed3b84c00586445476de4ef4 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_02a82f597dec5fb491100a692b231047 = $(`<div id="html_02a82f597dec5fb491100a692b231047" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#e31a1c'>Lusaka</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zambia<br>             <b>Urban Pop (2020):</b> 2.85 million<br>             <b>Cumulative PEI (2018–2024):</b> 49.066<br>             <b>Peak-season mean AAI:</b> -0.445<br>             <b>Exposure Rank:</b>             <span style='color:#e31a1c;font-weight:bold'>#2 of 15</span>             </div></div>`)[0];
+                popup_b47ce8dfed3b84c00586445476de4ef4.setContent(html_02a82f597dec5fb491100a692b231047);
+            
+        
+
+        circle_marker_0f634fc6c0b3b9f018a00769dd445d36.bindPopup(popup_b47ce8dfed3b84c00586445476de4ef4)
+        ;
+
+        
+    
+    
+            circle_marker_0f634fc6c0b3b9f018a00769dd445d36.bindTooltip(
+                `<div>
+                     Lusaka | PEI=49.07 | Rank #2
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_429345c8544dbe1bdf28fe6edc8d34a1 = L.circleMarker(
+                [-25.96, 32.59],
+                {"bubblingMouseEvents": true, "color": "#41ab5d", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#41ab5d", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 21.640649243858007, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_ce1310e3fafec4181176b4ed85d06f98 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_e3ee9a5b57540ad63532c109774e4a92 = $(`<div id="html_e3ee9a5b57540ad63532c109774e4a92" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#41ab5d'>Maputo</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Mozambique<br>             <b>Urban Pop (2020):</b> 2.40 million<br>             <b>Cumulative PEI (2018–2024):</b> 44.441<br>             <b>Peak-season mean AAI:</b> -0.526<br>             <b>Exposure Rank:</b>             <span style='color:#41ab5d;font-weight:bold'>#3 of 15</span>             </div></div>`)[0];
+                popup_ce1310e3fafec4181176b4ed85d06f98.setContent(html_e3ee9a5b57540ad63532c109774e4a92);
+            
+        
+
+        circle_marker_429345c8544dbe1bdf28fe6edc8d34a1.bindPopup(popup_ce1310e3fafec4181176b4ed85d06f98)
+        ;
+
+        
+    
+    
+            circle_marker_429345c8544dbe1bdf28fe6edc8d34a1.bindTooltip(
+                `<div>
+                     Maputo | PEI=44.44 | Rank #3
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9732d46f3a883c105fa01b277d00e48a = L.circleMarker(
+                [-17.83, 31.05],
+                {"bubblingMouseEvents": true, "color": "#2c7bb6", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2c7bb6", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.85901557952476, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_55235257c7a0300cbf8bceb54c61ec95 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_a25ee45b75255e7d8bd1dce1b063d520 = $(`<div id="html_a25ee45b75255e7d8bd1dce1b063d520" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#2c7bb6'>Harare</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zimbabwe<br>             <b>Urban Pop (2020):</b> 2.24 million<br>             <b>Cumulative PEI (2018–2024):</b> 38.637<br>             <b>Peak-season mean AAI:</b> -0.491<br>             <b>Exposure Rank:</b>             <span style='color:#2c7bb6;font-weight:bold'>#4 of 15</span>             </div></div>`)[0];
+                popup_55235257c7a0300cbf8bceb54c61ec95.setContent(html_a25ee45b75255e7d8bd1dce1b063d520);
+            
+        
+
+        circle_marker_9732d46f3a883c105fa01b277d00e48a.bindPopup(popup_55235257c7a0300cbf8bceb54c61ec95)
+        ;
+
+        
+    
+    
+            circle_marker_9732d46f3a883c105fa01b277d00e48a.bindTooltip(
+                `<div>
+                     Harare | PEI=38.64 | Rank #4
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e90c6588f21a464ebde13ebeae7134bd = L.circleMarker(
+                [-13.97, 33.78],
+                {"bubblingMouseEvents": true, "color": "#fecc5c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fecc5c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16.672789014442767, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_cc9cd76c83fe562342b1994a322f661e = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_073badd8cdb82ca6d6f1cdb1e727bddd = $(`<div id="html_073badd8cdb82ca6d6f1cdb1e727bddd" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#fecc5c'>Lilongwe</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Malawi<br>             <b>Urban Pop (2020):</b> 1.72 million<br>             <b>Cumulative PEI (2018–2024):</b> 28.256<br>             <b>Peak-season mean AAI:</b> -0.653<br>             <b>Exposure Rank:</b>             <span style='color:#fecc5c;font-weight:bold'>#5 of 15</span>             </div></div>`)[0];
+                popup_cc9cd76c83fe562342b1994a322f661e.setContent(html_073badd8cdb82ca6d6f1cdb1e727bddd);
+            
+        
+
+        circle_marker_e90c6588f21a464ebde13ebeae7134bd.bindPopup(popup_cc9cd76c83fe562342b1994a322f661e)
+        ;
+
+        
+    
+    
+            circle_marker_e90c6588f21a464ebde13ebeae7134bd.bindTooltip(
+                `<div>
+                     Lilongwe | PEI=28.26 | Rank #5
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7caa769b912b93094b034d5948c719ee = L.circleMarker(
+                [-15.79, 35.0],
+                {"bubblingMouseEvents": true, "color": "#fecc5c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fecc5c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.585493738165694, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_c48810c8d787f7d1ed54db7f6cb7fa4b = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_d0bf1a31ec76bb692c87161f7399f1e0 = $(`<div id="html_d0bf1a31ec76bb692c87161f7399f1e0" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#fecc5c'>Blantyre</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Malawi<br>             <b>Urban Pop (2020):</b> 1.29 million<br>             <b>Cumulative PEI (2018–2024):</b> 21.456<br>             <b>Peak-season mean AAI:</b> -0.598<br>             <b>Exposure Rank:</b>             <span style='color:#fecc5c;font-weight:bold'>#6 of 15</span>             </div></div>`)[0];
+                popup_c48810c8d787f7d1ed54db7f6cb7fa4b.setContent(html_d0bf1a31ec76bb692c87161f7399f1e0);
+            
+        
+
+        circle_marker_7caa769b912b93094b034d5948c719ee.bindPopup(popup_c48810c8d787f7d1ed54db7f6cb7fa4b)
+        ;
+
+        
+    
+    
+            circle_marker_7caa769b912b93094b034d5948c719ee.bindTooltip(
+                `<div>
+                     Blantyre | PEI=21.46 | Rank #6
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_746c64c3c0e4a2121dce4b873ca6f95d = L.circleMarker(
+                [-2.52, 32.9],
+                {"bubblingMouseEvents": true, "color": "#fd8d3c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fd8d3c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12.968318326707587, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_ad8c7c97c3ff974e37604133245d7eb5 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_368c8e5255d929e3e2006501f5e11f1d = $(`<div id="html_368c8e5255d929e3e2006501f5e11f1d" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#fd8d3c'>Mwanza</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Tanzania<br>             <b>Urban Pop (2020):</b> 1.01 million<br>             <b>Cumulative PEI (2018–2024):</b> 16.187<br>             <b>Peak-season mean AAI:</b> -0.778<br>             <b>Exposure Rank:</b>             <span style='color:#fd8d3c;font-weight:bold'>#7 of 15</span>             </div></div>`)[0];
+                popup_ad8c7c97c3ff974e37604133245d7eb5.setContent(html_368c8e5255d929e3e2006501f5e11f1d);
+            
+        
+
+        circle_marker_746c64c3c0e4a2121dce4b873ca6f95d.bindPopup(popup_ad8c7c97c3ff974e37604133245d7eb5)
+        ;
+
+        
+    
+    
+            circle_marker_746c64c3c0e4a2121dce4b873ca6f95d.bindTooltip(
+                `<div>
+                     Mwanza | PEI=16.19 | Rank #7
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5a94d3c2876fd7164325b258e8b87cb7 = L.circleMarker(
+                [-15.12, 39.26],
+                {"bubblingMouseEvents": true, "color": "#41ab5d", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#41ab5d", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12.87345549351953, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_f84590af2460fabafdfb4f139ab3840c = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_4b09431c7f1e8f2f92d0e5ba9b3daf4c = $(`<div id="html_4b09431c7f1e8f2f92d0e5ba9b3daf4c" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#41ab5d'>Nampula</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Mozambique<br>             <b>Urban Pop (2020):</b> 0.91 million<br>             <b>Cumulative PEI (2018–2024):</b> 15.878<br>             <b>Peak-season mean AAI:</b> -0.718<br>             <b>Exposure Rank:</b>             <span style='color:#41ab5d;font-weight:bold'>#8 of 15</span>             </div></div>`)[0];
+                popup_f84590af2460fabafdfb4f139ab3840c.setContent(html_4b09431c7f1e8f2f92d0e5ba9b3daf4c);
+            
+        
+
+        circle_marker_5a94d3c2876fd7164325b258e8b87cb7.bindPopup(popup_f84590af2460fabafdfb4f139ab3840c)
+        ;
+
+        
+    
+    
+            circle_marker_5a94d3c2876fd7164325b258e8b87cb7.bindTooltip(
+                `<div>
+                     Nampula | PEI=15.88 | Rank #8
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_adcc2d3948ad715030de4273cf06ad75 = L.circleMarker(
+                [-3.39, 36.68],
+                {"bubblingMouseEvents": true, "color": "#fd8d3c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#fd8d3c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12.542947094704008, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_25d119f9492287bde0bd43773341ac7c = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_bc198802414556d745f7b0772555ce4b = $(`<div id="html_bc198802414556d745f7b0772555ce4b" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#fd8d3c'>Arusha</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Tanzania<br>             <b>Urban Pop (2020):</b> 0.94 million<br>             <b>Cumulative PEI (2018–2024):</b> 14.801<br>             <b>Peak-season mean AAI:</b> -0.701<br>             <b>Exposure Rank:</b>             <span style='color:#fd8d3c;font-weight:bold'>#9 of 15</span>             </div></div>`)[0];
+                popup_25d119f9492287bde0bd43773341ac7c.setContent(html_bc198802414556d745f7b0772555ce4b);
+            
+        
+
+        circle_marker_adcc2d3948ad715030de4273cf06ad75.bindPopup(popup_25d119f9492287bde0bd43773341ac7c)
+        ;
+
+        
+    
+    
+            circle_marker_adcc2d3948ad715030de4273cf06ad75.bindTooltip(
+                `<div>
+                     Arusha | PEI=14.80 | Rank #9
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c7835fa68af069a02e052381234dd4a4 = L.circleMarker(
+                [-12.82, 28.21],
+                {"bubblingMouseEvents": true, "color": "#e31a1c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e31a1c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.923854720505465, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_98a6496735ee7e6a213b30e41b7344dd = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_7bf34bb304fcf9488479ac87453f29d0 = $(`<div id="html_7bf34bb304fcf9488479ac87453f29d0" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#e31a1c'>Kitwe</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zambia<br>             <b>Urban Pop (2020):</b> 0.75 million<br>             <b>Cumulative PEI (2018–2024):</b> 12.784<br>             <b>Peak-season mean AAI:</b> -0.528<br>             <b>Exposure Rank:</b>             <span style='color:#e31a1c;font-weight:bold'>#10 of 15</span>             </div></div>`)[0];
+                popup_98a6496735ee7e6a213b30e41b7344dd.setContent(html_7bf34bb304fcf9488479ac87453f29d0);
+            
+        
+
+        circle_marker_c7835fa68af069a02e052381234dd4a4.bindPopup(popup_98a6496735ee7e6a213b30e41b7344dd)
+        ;
+
+        
+    
+    
+            circle_marker_c7835fa68af069a02e052381234dd4a4.bindTooltip(
+                `<div>
+                     Kitwe | PEI=12.78 | Rank #10
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_20914a17799184a1a8315de23b29cea7 = L.circleMarker(
+                [-20.15, 28.58],
+                {"bubblingMouseEvents": true, "color": "#2c7bb6", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2c7bb6", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.264773637680024, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_bd09389001ed790ee90ec36104ebd162 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_9d7f547322f9f515165f4282630470b6 = $(`<div id="html_9d7f547322f9f515165f4282630470b6" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#2c7bb6'>Bulawayo</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zimbabwe<br>             <b>Urban Pop (2020):</b> 0.60 million<br>             <b>Cumulative PEI (2018–2024):</b> 10.637<br>             <b>Peak-season mean AAI:</b> -0.349<br>             <b>Exposure Rank:</b>             <span style='color:#2c7bb6;font-weight:bold'>#11 of 15</span>             </div></div>`)[0];
+                popup_bd09389001ed790ee90ec36104ebd162.setContent(html_9d7f547322f9f515165f4282630470b6);
+            
+        
+
+        circle_marker_20914a17799184a1a8315de23b29cea7.bindPopup(popup_bd09389001ed790ee90ec36104ebd162)
+        ;
+
+        
+    
+    
+            circle_marker_20914a17799184a1a8315de23b29cea7.bindTooltip(
+                `<div>
+                     Bulawayo | PEI=10.64 | Rank #11
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c3f7f62e94e5365ec01b4cd5c8161bda = L.circleMarker(
+                [-12.97, 28.64],
+                {"bubblingMouseEvents": true, "color": "#e31a1c", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e31a1c", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.084308796218416, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_842b271d721294c4f6df6e1c05e51fb1 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_2ad1932e2a4e94935970a1afaeb429cf = $(`<div id="html_2ad1932e2a4e94935970a1afaeb429cf" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#e31a1c'>Ndola</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zambia<br>             <b>Urban Pop (2020):</b> 0.58 million<br>             <b>Cumulative PEI (2018–2024):</b> 10.049<br>             <b>Peak-season mean AAI:</b> -0.542<br>             <b>Exposure Rank:</b>             <span style='color:#e31a1c;font-weight:bold'>#12 of 15</span>             </div></div>`)[0];
+                popup_842b271d721294c4f6df6e1c05e51fb1.setContent(html_2ad1932e2a4e94935970a1afaeb429cf);
+            
+        
+
+        circle_marker_c3f7f62e94e5365ec01b4cd5c8161bda.bindPopup(popup_842b271d721294c4f6df6e1c05e51fb1)
+        ;
+
+        
+    
+    
+            circle_marker_c3f7f62e94e5365ec01b4cd5c8161bda.bindTooltip(
+                `<div>
+                     Ndola | PEI=10.05 | Rank #12
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_89d769ee2e641396369da6ddb9a3d24c = L.circleMarker(
+                [-19.84, 34.84],
+                {"bubblingMouseEvents": true, "color": "#41ab5d", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#41ab5d", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.506309301951084, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_126751b1ec4f43c07eb56d5fe87daec2 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_da0565a044fe5e220b73d77fd4d7868e = $(`<div id="html_da0565a044fe5e220b73d77fd4d7868e" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#41ab5d'>Beira</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Mozambique<br>             <b>Urban Pop (2020):</b> 0.44 million<br>             <b>Cumulative PEI (2018–2024):</b> 8.166<br>             <b>Peak-season mean AAI:</b> -0.564<br>             <b>Exposure Rank:</b>             <span style='color:#41ab5d;font-weight:bold'>#13 of 15</span>             </div></div>`)[0];
+                popup_126751b1ec4f43c07eb56d5fe87daec2.setContent(html_da0565a044fe5e220b73d77fd4d7868e);
+            
+        
+
+        circle_marker_89d769ee2e641396369da6ddb9a3d24c.bindPopup(popup_126751b1ec4f43c07eb56d5fe87daec2)
+        ;
+
+        
+    
+    
+            circle_marker_89d769ee2e641396369da6ddb9a3d24c.bindTooltip(
+                `<div>
+                     Beira | PEI=8.17 | Rank #13
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b7e48e4851ad5ea8243919a02c675c9d = L.circleMarker(
+                [-18.97, 32.67],
+                {"bubblingMouseEvents": true, "color": "#2c7bb6", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2c7bb6", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.93182986541156, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_899c3100ea14b80cea2a70599edfd6a0 = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_e3d964e3399edca11c2632ed4baae6dc = $(`<div id="html_e3d964e3399edca11c2632ed4baae6dc" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#2c7bb6'>Mutare</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zimbabwe<br>             <b>Urban Pop (2020):</b> 0.36 million<br>             <b>Cumulative PEI (2018–2024):</b> 6.294<br>             <b>Peak-season mean AAI:</b> -0.505<br>             <b>Exposure Rank:</b>             <span style='color:#2c7bb6;font-weight:bold'>#14 of 15</span>             </div></div>`)[0];
+                popup_899c3100ea14b80cea2a70599edfd6a0.setContent(html_e3d964e3399edca11c2632ed4baae6dc);
+            
+        
+
+        circle_marker_b7e48e4851ad5ea8243919a02c675c9d.bindPopup(popup_899c3100ea14b80cea2a70599edfd6a0)
+        ;
+
+        
+    
+    
+            circle_marker_b7e48e4851ad5ea8243919a02c675c9d.bindTooltip(
+                `<div>
+                     Mutare | PEI=6.29 | Rank #14
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_cc732c12879862e8f8b268d95cf9e5b9 = L.circleMarker(
+                [-19.46, 29.82],
+                {"bubblingMouseEvents": true, "color": "#2c7bb6", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#2c7bb6", "fillOpacity": 0.75, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8.984484631969686, "stroke": true, "weight": 3}
+            ).addTo(feature_group_f224cbbef0401c5212ad682035cedd25);
+        
+    
+        var popup_693c2ab1db4011d40d6df96bd5ecef3a = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_198b20d17864c8401fb09db5c366f1dd = $(`<div id="html_198b20d17864c8401fb09db5c366f1dd" style="width: 100.0%; height: 100.0%;"><div style='font-family:Arial;min-width:220px;padding:4px'>             <b style='font-size:14px;color:#2c7bb6'>Gweru</b><br>             <hr style='margin:4px 0;border-color:#eee'>             <b>Country:</b> Zimbabwe<br>             <b>Urban Pop (2020):</b> 0.19 million<br>             <b>Cumulative PEI (2018–2024):</b> 3.207<br>             <b>Peak-season mean AAI:</b> -0.423<br>             <b>Exposure Rank:</b>             <span style='color:#2c7bb6;font-weight:bold'>#15 of 15</span>             </div></div>`)[0];
+                popup_693c2ab1db4011d40d6df96bd5ecef3a.setContent(html_198b20d17864c8401fb09db5c366f1dd);
+            
+        
+
+        circle_marker_cc732c12879862e8f8b268d95cf9e5b9.bindPopup(popup_693c2ab1db4011d40d6df96bd5ecef3a)
+        ;
+
+        
+    
+    
+            circle_marker_cc732c12879862e8f8b268d95cf9e5b9.bindTooltip(
+                `<div>
+                     Gweru | PEI=3.21 | Rank #15
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_f224cbbef0401c5212ad682035cedd25.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var feature_group_acb0a330cafeb4666d76e41bb12f5927 = L.featureGroup(
+                {
+}
+            );
+        
+    
+        function geo_json_215d257e6b6012e7d645d30a8c3da77a_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#e31a1c", "dashArray": "6 4", "fillColor": "#e31a1c", "fillOpacity": 0.04, "weight": 2};
+            }
+        }
+
+        function geo_json_215d257e6b6012e7d645d30a8c3da77a_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_215d257e6b6012e7d645d30a8c3da77a = L.geoJson(null, {
+                onEachFeature: geo_json_215d257e6b6012e7d645d30a8c3da77a_onEachFeature,
+            
+                style: geo_json_215d257e6b6012e7d645d30a8c3da77a_styler,
+            ...{
+}
+        });
+
+        function geo_json_215d257e6b6012e7d645d30a8c3da77a_add (data) {
+            geo_json_215d257e6b6012e7d645d30a8c3da77a
+                .addData(data);
+        }
+            geo_json_215d257e6b6012e7d645d30a8c3da77a_add({"features": [{"geometry": {"coordinates": [[[[33.08435496285763, -14.051580729279296], [33.20844453326568, -14.001882378950018], [33.14611513314781, -13.94022835971002], [33.07085152141239, -13.984076560113307], [33.08435496285763, -14.051580729279296]]], [[[25.093731049644667, -17.70365664479922], [25.432590583154447, -17.853587236479534], [25.708680590051273, -17.843458634630895], [25.84951606086805, -17.931067460943463], [25.918004592840486, -17.996386434817293], [26.091706286787087, -17.98153805022166], [26.15285671917496, -17.919044044307547], [26.275350655040583, -17.91868901747565], [26.57463972374391, -18.017504865135965], [26.72022948283828, -18.047580597566952], [27.075396076852744, -17.912931080258407], [27.438851176589417, -17.499460184312476], [27.627747124790186, -17.27213577563118], [27.857575574095176, -16.949741692115257], [28.698069724646064, -16.55369609890968], [28.83951441530421, -16.410402302878666], [28.88116564006053, -16.009324248130977], [29.42039194323409, -15.691100770305852], [29.94077367165736, -15.627848848613693], [30.179691052167577, -15.628675698566038], [30.208733137848046, -15.666571738107832], [30.409582220787883, -15.613689502256703], [30.375716965870815, -15.458281215390762], [30.342781889565916, -15.31406954961024], [30.21793154323293, -15.094410300314427], [30.219860840240752, -14.997155242897287], [31.90025619212831, -14.441373226244453], [33.02750511852024, -14.070766626593914], [33.08435496285763, -14.051580729279296], [33.014074259554036, -14.02729474142301], [33.000805359997365, -13.976829799853231], [32.85638341987083, -13.796345988553137], [32.77903897147036, -13.780943614433966], [32.83226197734509, -13.702477712702652], [32.672520562230744, -13.62083777653956], [32.69602637600899, -13.568774104652942], [32.839479874554875, -13.498638282360412], [33.00563776618501, -13.19285987105354], [33.015013980461376, -12.891786822278286], [32.94998264540904, -12.814643865646392], [33.07767443491775, -12.599245918684863], [33.1761869016816, -12.641652193139816], [33.31717263668461, -12.527928353239723], [33.38757496433351, -12.539041580577267], [33.53466479486025, -12.337620492426645], [33.36972504607834, -12.346360442823757], [33.2687117386169, -12.095785558046183], [33.316333189106395, -11.646611678294217], [33.27491175645073, -11.583195588380157], [33.237096086991805, -11.551196684953029], [33.23245435512768, -11.420372440999925], [33.292380045382814, -11.440414590299856], [33.40059578974803, -11.17056285841904], [33.26174407656112, -10.901827553105996], [33.402575113683454, -10.809450854812445], [33.5508721337095, -10.732688211986597], [33.70867268802293, -10.56995920578196], [33.549356156142125, -10.370823719302903], [33.52904298547284, -10.208374969748299], [33.32405350275628, -10.075251063485073], [33.35675055758833, -9.84487603676601], [33.228078586148, -9.717055754340059], [33.19465883204419, -9.60206175569712], [33.07906705371747, -9.656743271910852], [33.00663298536945, -9.594986270942423], [32.997597545893925, -9.496491808620709], [32.95103086056665, -9.492943264620298], [32.959645357824584, -9.400683722203187], [32.58695384263142, -9.251859896714898], [32.437437765035895, -9.119443370824762], [32.193001392151956, -9.095792762244043], [31.96445372356611, -9.057672785938447], [31.949570969816694, -8.936043679637114], [31.64430450240859, -8.879957520964028], [31.568719099627447, -8.760309390106439], [31.55190701080595, -8.688220753744401], [31.34723391539556, -8.616114909186667], [31.21773277517273, -8.587537832549963], [31.065183878135354, -8.619663373616978], [30.772833092363665, -8.203289152055019], [28.891553519534785, -8.47777445954828], [28.951445611902216, -8.692234303730677], [28.60594696514063, -9.108294783475369], [28.38007652708387, -9.246687955180233], [28.524563781831997, -9.395378283666004], [28.58116674970095, -9.561311312498686], [28.673943155457554, -9.83591989112183], [28.579513105322306, -10.233208286433598], [28.645521063135956, -10.452109678069474], [28.697232022662398, -10.673801530725788], [28.581235584399792, -10.811054140519103], [28.481190046118098, -11.2007633357157], [28.38937829028473, -11.594865064918718], [28.49528045910234, -11.883960246095834], [28.765100403815143, -11.992015686382], [29.042327219565415, -12.384188132149559], [29.305945940355944, -12.394695658194673], [29.514443089384184, -12.440773777476204], [29.47933755868687, -12.256116652326225], [29.583482822067797, -12.200960670146749], [29.728865875100574, -12.199668749496619], [29.795287282752913, -12.1551237261079], [29.790429679302044, -13.441229529368762], [29.61311061295146, -13.403677954958933], [29.67054038216582, -13.254281422542471], [29.531358525234257, -13.227926413227063], [29.357863522198883, -13.33017686953496], [29.172069458484902, -13.434184277052362], [29.097931062461967, -13.378201499660197], [28.986206566261842, -13.403367886079383], [28.896634109585687, -13.15594113739175], [28.847438165953413, -13.109673547751374], [28.72768662495272, -12.89202959483687], [28.622680098511026, -12.830396851448912], [28.562700994138307, -12.89511302098941], [28.461415220919974, -12.696606598350314], [28.534692350674266, -12.637661021464169], [28.290917425612903, -12.423083230021978], [28.141985917254612, -12.409130552746106], [28.009280857176776, -12.348962020778552], [27.95581302334401, -12.359038900847159], [27.92215437962303, -12.239666367191537], [27.81222137061985, -12.221682954465212], [27.737118295384736, -12.282902296222058], [27.624946000649768, -12.252137605209326], [27.46264755215595, -12.006984567555712], [27.444285224809907, -11.91794613273558], [27.22934568851671, -11.765586769215666], [27.18607527561175, -11.582669379982168], [27.02928904867476, -11.605424264921778], [26.98515735477695, -11.864099290479134], [26.856620848329037, -11.978562557843873], [26.5498695609895, -11.977735713013232], [26.40493435518144, -11.929177145469746], [25.97977507510033, -11.947884000873591], [25.932473954885687, -11.887991011979668], [25.85013621474195, -11.814541525276638], [25.666443677240444, -11.769824254358825], [25.611391093003757, -11.733047834718766], [25.505661094327873, -11.791287152514847], [25.460289137332985, -11.675997084758968], [25.349012568266353, -11.637119102521504], [25.31339026136623, -11.538830582123602], [25.301952554730825, -11.300653923042868], [25.352388767075876, -11.196129664900877], [24.69403104461191, -11.333123909052233], [24.517469876222254, -11.463538013886248], [24.28568386762985, -11.379064293573432], [24.395134541416944, -11.276486584533046], [24.379287088047317, -11.085128742895332], [24.14398712611114, -11.022290209925494], [24.097719422113467, -10.907327377136735], [23.980528360933224, -10.911177899486407], [24.01541702316523, -11.07758369739152], [24.07951518483447, -11.381719965677647], [23.97244736438745, -11.683721849456205], [23.998017932571837, -11.85596296533703], [24.016853579181753, -12.22333548476347], [24.077938915165024, -12.362314774793187], [23.951639302123876, -12.568313623403947], [23.907424844911397, -12.846669892305874], [24.042543060095028, -12.987602014994739], [21.998347174662527, -12.999998947885683], [22.02991900079332, -16.21873103092437], [22.13975300336391, -16.439483029667915], [22.160449021018522, -16.50684496216178], [22.85358397269748, -17.190826030715993], [23.06873498726325, -17.381405012744665], [23.28690603975579, -17.542020982084097], [23.46364342487872, -17.631959443024652], [24.380906323829763, -17.471078287019612], [24.617377656894256, -17.52881810533747], [24.888265511602697, -17.534950332573203], [25.06530899568554, -17.615462204240796], [25.093731049644667, -17.70365664479922]]]], "type": "MultiPolygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_215d257e6b6012e7d645d30a8c3da77a.bindTooltip(
+                `<div>
+                     Zambia
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_215d257e6b6012e7d645d30a8c3da77a.addTo(feature_group_acb0a330cafeb4666d76e41bb12f5927);
+        
+    
+        function geo_json_379a8755bc179cfe50779f5a360dffbc_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#fd8d3c", "dashArray": "6 4", "fillColor": "#fd8d3c", "fillOpacity": 0.04, "weight": 2};
+            }
+        }
+
+        function geo_json_379a8755bc179cfe50779f5a360dffbc_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_379a8755bc179cfe50779f5a360dffbc = L.geoJson(null, {
+                onEachFeature: geo_json_379a8755bc179cfe50779f5a360dffbc_onEachFeature,
+            
+                style: geo_json_379a8755bc179cfe50779f5a360dffbc_styler,
+            ...{
+}
+        });
+
+        function geo_json_379a8755bc179cfe50779f5a360dffbc_add (data) {
+            geo_json_379a8755bc179cfe50779f5a360dffbc
+                .addData(data);
+        }
+            geo_json_379a8755bc179cfe50779f5a360dffbc_add({"features": [{"geometry": {"geometries": [{"coordinates": [[39.87848718646176, -7.675097621668405], [39.89796445175269, -7.6421308347299]], "type": "LineString"}, {"coordinates": [[39.71062471318477, -5.226121419568612], [39.66292574684145, -5.19655941504385]], "type": "LineString"}, {"coordinates": [[39.5350227634248, -6.186697474720826], [39.49495315704734, -6.151041996832829]], "type": "LineString"}, {"coordinates": [[39.21768189563707, -5.944747468695755], [39.19444278125975, -5.895805354557545]], "type": "LineString"}, {"coordinates": [[40.40902591070328, -10.383875628074037], [40.42517850704043, -10.320331607563327], [40.38645933654156, -10.320131283923251]], "type": "LineString"}, {"coordinates": [[40.203037271462534, -10.240179040373253], [40.16900252826231, -10.258051844767495]], "type": "LineString"}, {"coordinates": [[[40.250350957696234, -10.249738706542153], [40.23639297129783, -10.213377940969817], [40.203037271462534, -10.240179040373253], [40.250350957696234, -10.249738706542153]]], "type": "Polygon"}, {"coordinates": [[[39.612902006327126, -7.969193469885339], [39.74855744440322, -7.976237846975433], [39.78678599502319, -7.904444587742889], [39.85449602545635, -7.876815807685444], [39.903764726885086, -7.70255051510524], [39.87848718646176, -7.675097621668405], [39.81212117457021, -7.788810698314663], [39.779407528160554, -7.806157604891999], [39.70336530685485, -7.83428046658853], [39.69294591442272, -7.87093545707578], [39.588371306352784, -7.942276025239402], [39.612902006327126, -7.969193469885339]]], "type": "Polygon"}, {"coordinates": [[[39.63153838921267, -5.411479965910409], [39.759933456123676, -5.438559065950096], [39.863670360708596, -5.127707493376288], [39.840362579368126, -5.041345604446616], [39.87347794844149, -4.957205745156515], [39.85674670821938, -4.917106615302072], [39.81502532635515, -4.9275646103494335], [39.67775728281655, -4.873124115913651], [39.68119434350661, -5.040138702065767], [39.71504591728945, -5.078948964637845], [39.71649933703299, -5.151502632282583], [39.71062471318477, -5.226121419568612], [39.63153838921267, -5.411479965910409]]], "type": "Polygon"}, {"coordinates": [[[39.48173522342873, -6.464875210413949], [39.56875232546542, -6.424205296354026], [39.5350227634248, -6.186697474720826], [39.48104479730084, -6.198050038693633], [39.447246555530334, -6.18459035592438], [39.31211850114556, -5.730663758087145], [39.21768189563707, -5.944747468695755], [39.21133803287964, -6.137326690827646], [39.185543075386384, -6.162592881196832], [39.26558302740809, -6.3082652315294405], [39.28362273563665, -6.252770901960829], [39.30735781696058, -6.224183545679474], [39.341579432824645, -6.284163952477484], [39.40589521670845, -6.332108987771305], [39.41559215834139, -6.3683414404836], [39.48173522342873, -6.464875210413949]]], "type": "Polygon"}, {"coordinates": [[[32.959645357824584, -9.400683722203187], [32.99963608196587, -9.367145726540581], [33.21182632723713, -9.509824366755165], [33.34586809552962, -9.505914178724096], [33.472826803798796, -9.619395642837642], [33.78904525535726, -9.606993257526222], [33.94007399301593, -9.71847698647428], [33.96831602887953, -9.52958402599748], [34.063398983428, -9.523735026614824], [34.49586103450151, -9.984806028473693], [34.56614996734381, -10.395260033068498], [34.636051041577105, -10.640059960828378], [34.673158005853885, -10.939326990298355], [34.63654398864364, -11.057878004388696], [34.86026097348154, -11.353256995725062], [34.94335099624138, -11.473133965400377], [34.987907411879824, -11.573005912851691], [35.636439746779764, -11.55497081914937], [35.79643003224092, -11.442746818013081], [35.828028438365784, -11.410931407897895], [36.04100419826125, -11.504982542210263], [36.15409982807864, -11.570353182692184], [36.19789391088149, -11.578414704648102], [36.19819704776053, -11.687589807004194], [36.43670792904219, -11.68390355956067], [36.50884821238518, -11.725003549306432], [36.525453590278616, -11.757456316053267], [36.563446032210905, -11.712532307568457], [36.700560860876124, -11.690914327179202], [36.82313739638095, -11.56112034164901], [37.41665844312942, -11.682766679350648], [37.56934501351394, -11.62364883215921], [37.787323172400185, -11.481934796180239], [37.85356541559122, -11.30725124736057], [38.12156628400721, -11.263412425730511], [38.35468898725752, -11.349780978636486], [38.501587877946385, -11.402025849760399], [38.773240576389625, -11.247082651009064], [38.9979296903851, -11.167018609318808], [39.29361537487335, -11.137855870048265], [39.698731029580514, -10.930375042312079], [40.0930153219349, -10.727579501621932], [40.311131188390995, -10.569570177723895], [40.429037142809136, -10.46284397215606], [40.369723211756536, -10.39925504436595], [40.40902591070328, -10.383875628074037], [40.305168184102946, -10.299275387526992], [40.250350957696234, -10.249738706542153], [40.222976845839526, -10.276052922754511], [40.16900252826231, -10.258051844767495], [40.15356823589392, -10.290854454260558], [40.119052853364, -10.255031578567078], [40.12151333977909, -10.173516275754388], [39.98625561629497, -10.12867165792361], [39.78403475336255, -9.980658532477715], [39.74216462380367, -9.979370140766381], [39.71138763106743, -9.957948679089736], [39.785881003287116, -9.926773067472455], [39.75331618264868, -9.772655426290108], [39.655927173999025, -9.458324815647693], [39.602303730327584, -9.424188449604076], [39.64537071982843, -9.285149599221983], [39.58834473972358, -9.12875115194171], [39.58403070353613, -9.092228909531457], [39.58689916675996, -9.047679187629493], [39.548400836114936, -9.029662444385876], [39.547092535885696, -9.091381714783395], [39.51944082210277, -9.119045351370483], [39.507346084745635, -9.061124362848794], [39.489604891470435, -8.941600925648707], [39.52646672585578, -8.906263588152083], [39.363091308771644, -8.697245350219118], [39.334213498761734, -8.570594606853122], [39.29948376226433, -8.521786413664202], [39.29759316745504, -8.425115880103954], [39.31000672456311, -8.37359665399168], [39.28867727729469, -8.290719182296993], [39.3416877838424, -8.290355720623479], [39.35669080918812, -8.213897932396414], [39.37084100840767, -8.1702459852865], [39.3609928797857, -8.133396016228957], [39.39356652945497, -8.111340827319031], [39.410092152320544, -8.077982784652956], [39.43365944694063, -8.039564970407415], [39.44862743966145, -7.990822313053916], [39.40057803944451, -7.916569993209775], [39.44533031768914, -7.832135551990135], [39.404040170409495, -7.828443601313411], [39.36457263605317, -7.7788821333871105], [39.32031217723386, -7.738209593880373], [39.297351839478644, -7.483689317393811], [39.4444618597844, -7.18472481363454], [39.55248640430368, -7.133340356894404], [39.49749377311494, -6.906966659972285], [39.29902646387276, -6.8255252866530585], [39.164852150160016, -6.597424035549651], [39.06095125349549, -6.493767252515486], [38.92424773123112, -6.45233151399547], [38.842346206701215, -6.33240890992699], [38.8342533133545, -6.141350560349862], [38.78706739251664, -6.006282778037925], [38.98564526707544, -5.426051140942361], [39.13808581946459, -5.107922848977283], [39.108821891524315, -5.022080408678386], [39.153504294783765, -5.0017672369490125], [39.14508765934369, -4.903914179389517], [39.17470260310791, -4.94005644499869], [39.18857396825336, -4.905949722230938], [39.19684988825567, -4.79860220374024], [39.161504298081596, -4.788957028251852], [39.20918694505119, -4.705069121980097], [37.76251840895654, -3.6178670326420246], [37.68810439713489, -3.5179076096623465], [37.6020459180893, -3.5131188921511995], [37.59911351900921, -3.424935628900732], [37.71059695100977, -3.3019027398396963], [37.661121190963435, -3.0529681055258417], [34.07119309801867, -1.0275175664320675], [30.737693157994304, -1.0066051965049896], [30.539393485938326, -1.0756104747764712], [30.452339020412687, -1.0987909896546522], [30.629484985014827, -1.3893129717304145], [30.741052987350233, -1.479520981921738], [30.821385999873293, -1.692340995872649], [30.828188230210255, -1.9708281548275073], [30.89794799334489, -2.082958973269096], [30.836188961444023, -2.3435240069819354], [30.752900987577977, -2.3816609871523373], [30.68934197368984, -2.3820919946643047], [30.520299018260857, -2.4573629793281397], [30.43972003296758, -2.678440979922709], [30.485564989079172, -2.6766290332733442], [30.436246005691316, -2.887865990314035], [30.534896969329246, -2.9324319696024785], [30.598544976929098, -2.922876017071206], [30.736472017218787, -2.992138015430768], [30.830533960504976, -3.0069470280492907], [30.839547960508824, -3.255897032589538], [30.65701100100404, -3.3345359775347334], [30.649260979512334, -3.442198987809324], [30.4474809837521, -3.5673130185861397], [30.44533599864679, -3.6174410221428146], [30.384165971195934, -3.781595988951389], [30.29838002315665, -3.857018967332574], [30.25093501370961, -3.9069139899606484], [30.136523961444766, -4.130411015102517], [29.945424005758998, -4.334937021809131], [29.78931100727049, -4.407984981937929], [29.729121008953033, -4.46110302007638], [29.41462300206257, -4.444442970909108], [29.355793755599965, -4.966179765475697], [29.62500361936821, -5.770909156561413], [29.49473716311843, -6.017772204047971], [29.596411301927148, -6.3747613915519725], [29.791940455268932, -6.673876143553897], [30.22668210127244, -7.015006770877524], [30.428904255750698, -7.455158000464467], [30.91297415580503, -8.45316903853156], [31.103837879556686, -8.631635042897349], [31.25263156602401, -8.599061676461563], [31.390883221122092, -8.62441755844942], [31.57285319744666, -8.722068808448384], [31.612058357292224, -8.863231638809912], [31.757028035991972, -8.90626083678679], [31.949570969816694, -8.936043679637114], [31.96445372356611, -9.057672785938447], [32.193001392151956, -9.095792762244043], [32.4930691823505, -9.151069329175472], [32.58695384263142, -9.251859896714898], [32.81270512157343, -9.337431788313731], [32.959645357824584, -9.400683722203187]], [[39.48644583646641, -8.905206583029136], [39.44796753936514, -8.905717843275916], [39.489604891470435, -8.941600925648707], [39.48644583646641, -8.905206583029136]], [[39.42307529620989, -8.871765132070408], [39.39201930167225, -8.892715621983799], [39.44796753936514, -8.905717843275916], [39.42307529620989, -8.871765132070408]]], "type": "Polygon"}], "type": "GeometryCollection"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_379a8755bc179cfe50779f5a360dffbc.bindTooltip(
+                `<div>
+                     Tanzania
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_379a8755bc179cfe50779f5a360dffbc.addTo(feature_group_acb0a330cafeb4666d76e41bb12f5927);
+        
+    
+        function geo_json_c27d8370ccf9668db71ad51587d679de_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#d4ac00", "dashArray": "6 4", "fillColor": "#d4ac00", "fillOpacity": 0.04, "weight": 2};
+            }
+        }
+
+        function geo_json_c27d8370ccf9668db71ad51587d679de_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_c27d8370ccf9668db71ad51587d679de = L.geoJson(null, {
+                onEachFeature: geo_json_c27d8370ccf9668db71ad51587d679de_onEachFeature,
+            
+                style: geo_json_c27d8370ccf9668db71ad51587d679de_styler,
+            ...{
+}
+        });
+
+        function geo_json_c27d8370ccf9668db71ad51587d679de_add (data) {
+            geo_json_c27d8370ccf9668db71ad51587d679de
+                .addData(data);
+        }
+            geo_json_c27d8370ccf9668db71ad51587d679de_add({"features": [{"geometry": {"coordinates": [[[[34.57919892510072, -12.057041188682481], [34.68756635691602, -12.055484617159484], [34.612126616975985, -11.97404598880015], [34.57919892510072, -12.057041188682481]]], [[[34.70637835636988, -12.136484703157608], [34.7808791102522, -12.02017344893245], [34.70511066242148, -12.008775613429227], [34.68756635691602, -12.055484617159484], [34.70637835636988, -12.136484703157608]]], [[[33.14611513314781, -13.94022835971002], [33.32222946699629, -14.08443535390286], [33.33415410551169, -14.184291848187929], [33.56525472972387, -14.479487529035982], [33.68519551626574, -14.61322682482063], [33.711816436001776, -14.517074693722824], [33.87737940129965, -14.520677458499195], [33.93892049392426, -14.47361980664749], [34.112830120127015, -14.451717183822467], [34.37136506351348, -14.388266595827728], [34.54286291968976, -14.629455440404739], [34.612822117218556, -15.016710226654968], [34.582132396934355, -15.189960550166399], [34.5890377671963, -15.297324898192688], [34.51068630713688, -15.414064302175587], [34.43010866331632, -15.472156008995158], [34.429737254695546, -15.649614385531228], [34.249675373218956, -15.846423331104791], [34.3160202892938, -15.940699588956507], [34.434574752762835, -16.06023380541632], [34.42415578235464, -16.255224090759928], [34.568827539880346, -16.344996626867843], [34.95275818206909, -16.741006422480353], [35.08834027161612, -16.81843997566381], [35.14707817499064, -16.875905547300736], [35.16721421089691, -16.920151707839434], [35.05988071315523, -17.028568424117], [35.07796826312739, -17.10798426632083], [35.30394610177603, -17.125912298754255], [35.27830676830885, -16.91287159034476], [35.288627428463975, -16.710324735932996], [35.15066465341648, -16.572614884496602], [35.26449625497933, -16.428294586887414], [35.332405571243484, -16.19716851012131], [35.42963746305316, -16.113849631351442], [35.54422123167654, -16.141111210800876], [35.79361703323134, -16.04286129769325], [35.84223718086187, -15.370087406902773], [35.79732097347544, -15.19779570008416], [35.91857314264114, -14.895350284471473], [35.8721120822958, -14.895362909635018], [35.858946858540776, -14.659987503094158], [34.8668983183218, -13.48311046149667], [34.607173845815915, -13.4831100526936], [34.520564146109045, -12.682318757462413], [34.37823062909808, -12.171651759432324], [34.63442587513487, -11.739241716731827], [34.63689653821027, -11.573565995010286], [34.96221099935725, -11.542048035587028], [34.928780014033734, -11.400589974128748], [34.787699008878946, -11.305016962607318], [34.611951981024035, -11.029142035650523], [34.674976026494946, -10.79516001229328], [34.58285195890234, -10.50289097256265], [34.49586103450151, -9.984806028473693], [34.063398983428, -9.523735026614824], [33.96831602887953, -9.52958402599748], [33.94007399301593, -9.71847698647428], [33.7461882751249, -9.585909317262994], [33.472826803798796, -9.619395642837642], [33.28892762537637, -9.49387354813127], [33.08036151908795, -9.442696682195622], [32.99963608196587, -9.367145726540581], [32.95103086056665, -9.492943264620298], [33.032881763987334, -9.513397931864775], [33.00663298536945, -9.594986270942423], [33.07906705371747, -9.656743271910852], [33.19465883204419, -9.60206175569712], [33.292795804485785, -9.79496605191547], [33.36847019498376, -9.92302540649493], [33.32405350275628, -10.075251063485073], [33.55952751450324, -10.231753112723407], [33.588328464226976, -10.436640661013863], [33.70867268802293, -10.56995920578196], [33.440787319322524, -10.820779079734715], [33.292482250495404, -10.875368039304536], [33.26174407656112, -10.901827553105996], [33.40059578974803, -11.17056285841904], [33.292380045382814, -11.440414590299856], [33.23245435512768, -11.420372440999925], [33.237935362312584, -11.590554344494135], [33.311847018825524, -11.594638066557414], [33.28307901522522, -12.05608462821798], [33.26322098015633, -12.14829509598568], [33.41274432779633, -12.343679892094373], [33.53466479486025, -12.337620492426645], [33.38757496433351, -12.539041580577267], [33.24385508681438, -12.581588200320198], [33.1761869016816, -12.641652193139816], [33.07767443491775, -12.599245918684863], [32.94998264540904, -12.814643865646392], [33.01923453915128, -12.931839506911325], [32.991788468804074, -13.229669136239812], [32.82635156578921, -13.535318135718613], [32.672520562230744, -13.62083777653956], [32.83226197734509, -13.702477712702652], [32.77903897147036, -13.780943614433966], [32.95332403469777, -13.904432528456574], [33.014074259554036, -14.02729474142301], [33.14611513314781, -13.94022835971002]]]], "type": "MultiPolygon"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_c27d8370ccf9668db71ad51587d679de.bindTooltip(
+                `<div>
+                     Malawi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_c27d8370ccf9668db71ad51587d679de.addTo(feature_group_acb0a330cafeb4666d76e41bb12f5927);
+        
+    
+        function geo_json_22c4ce2891bae997f37a1e08ee554f16_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#41ab5d", "dashArray": "6 4", "fillColor": "#41ab5d", "fillOpacity": 0.04, "weight": 2};
+            }
+        }
+
+        function geo_json_22c4ce2891bae997f37a1e08ee554f16_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_22c4ce2891bae997f37a1e08ee554f16 = L.geoJson(null, {
+                onEachFeature: geo_json_22c4ce2891bae997f37a1e08ee554f16_onEachFeature,
+            
+                style: geo_json_22c4ce2891bae997f37a1e08ee554f16_styler,
+            ...{
+}
+        });
+
+        function geo_json_22c4ce2891bae997f37a1e08ee554f16_add (data) {
+            geo_json_22c4ce2891bae997f37a1e08ee554f16
+                .addData(data);
+        }
+            geo_json_22c4ce2891bae997f37a1e08ee554f16_add({"features": [{"geometry": {"geometries": [{"coordinates": [[32.7427444133105, -25.75037197764724], [32.71316905842884, -25.821830777049115], [32.74120713142036, -25.852001192628435]], "type": "LineString"}, {"coordinates": [[35.536796602816096, -23.817195848497644], [35.481452924140136, -23.78329275718562], [35.49026869840667, -23.82342718700012]], "type": "LineString"}, {"coordinates": [[35.111757575530646, -21.29110046696861], [35.084255716415136, -21.255041615537696]], "type": "LineString"}, {"coordinates": [[36.800895666168124, -18.24829295294686], [36.82793007241952, -18.21968655507763]], "type": "LineString"}, {"coordinates": [[37.23431598007818, -17.7482312563219], [37.18577497682724, -17.785231901055933]], "type": "LineString"}, {"coordinates": [[38.65488270524701, -17.086788329075556], [38.703831543430965, -17.081923788249007]], "type": "LineString"}, {"coordinates": [[39.861395291227275, -16.221530372733316], [39.89907523245428, -16.226387363252005]], "type": "LineString"}, {"coordinates": [[40.12655637182674, -16.01466753209979], [40.139019519845185, -15.974768568327773]], "type": "LineString"}, {"coordinates": [[40.654785142267855, -15.010208141017124], [40.664726286658215, -14.973451598680278]], "type": "LineString"}, {"coordinates": [[40.74305722741331, -14.961111062365921], [40.766696909692115, -14.992200826417717]], "type": "LineString"}, {"coordinates": [[40.5689697325284, -13.591048273917117], [40.59918352419311, -13.553244639273666]], "type": "LineString"}, {"coordinates": [[40.51182830145692, -12.982832720159921], [40.51318377308359, -12.926057403199735]], "type": "LineString"}, {"coordinates": [[40.62522505290192, -12.777349500761122], [40.614749646322814, -12.723438449596271]], "type": "LineString"}, {"coordinates": [[40.569802572702194, -12.655609334410418], [40.603210193087826, -12.639333799929041]], "type": "LineString"}, {"coordinates": [[40.59251964649279, -10.695696890529133], [40.63612988967644, -10.700593636361814]], "type": "LineString"}, {"coordinates": [[40.47317719276361, -10.481641767834624], [40.52337865047584, -10.483323714128026]], "type": "LineString"}, {"coordinates": [[[30.390014141457254, -15.582924807882518], [30.431389735428652, -16.005465782619954], [30.95793807271039, -16.029788176173728], [31.02770131567898, -16.027652202600287], [31.25590439769687, -16.007567243034007], [31.482247214676537, -16.160908490766975], [31.767160000185033, -16.231808575159633], [31.933695910398928, -16.413709553568232], [32.4989120313389, -16.5044702415474], [32.708350193862735, -16.62829739162984], [32.772163318061686, -16.708575274285415], [32.97308123572123, -16.703717757203684], [32.88306994117264, -16.906715881776318], [32.83303126599919, -16.922860201448415], [32.99391846869877, -17.24847846528334], [33.046690295735424, -17.341042110447393], [32.975975102598674, -17.536052814372503], [33.047591746919785, -17.635133751794164], [32.952824054148365, -17.88807261658065], [32.94230961325132, -18.010339060153772], [32.95712358165526, -18.048751863241755], [33.05668678986446, -18.33982802820623], [33.02678336554333, -18.466986504875873], [32.89574401660962, -18.541204001622475], [32.95144608587354, -18.725024164338187], [32.85323964911342, -18.783398213049537], [32.73126312727416, -18.82324384989427], [32.71378767591448, -19.005386192685926], [32.8340984312898, -19.01075117914681], [32.86235488600385, -19.199386489863812], [32.77722063719654, -19.459628786747732], [32.85900728423924, -19.545645895408068], [32.83296232461666, -19.6718741850681], [32.97579598954437, -19.651038246170295], [32.956200249753024, -19.717804172385627], [33.04807407490391, -19.810683947695484], [33.027344481260734, -20.022018497065616], [32.92308602114552, -20.044840260051622], [32.90989817236409, -20.110641527946967], [32.84940235027432, -20.20659431713827], [32.83779266926591, -20.311512358839675], [32.668011170583455, -20.55588568179379], [32.52148046905562, -20.594498855834328], [32.51522594060881, -20.87283455039146], [32.39017110669086, -21.15792298166741], [32.4683090665459, -21.30043865274685], [31.309518434205128, -22.422005308076425], [31.557473282278632, -23.276655536384403], [31.58127551169513, -23.502685713220565], [31.696911042288598, -23.71524030035465], [31.819208040832258, -23.91582858109488], [31.891691928563628, -24.045101394916585], [32.003288398291716, -24.577487812572258], [31.999920813304136, -25.412366880184674], [31.941700259358505, -25.867963341491418], [32.00294676899389, -25.99692598565123], [32.0855573379259, -26.02968059141137], [32.07784649140825, -26.405539465665033], [32.14573469375364, -26.85028182928924], [32.88690182885886, -26.82804874627433], [32.95769884380661, -26.098451615539755], [32.866718260574316, -26.261716818069107], [32.801148653542334, -26.264553685556322], [32.73473358072782, -26.19603349005697], [32.68745042373588, -26.207304036597822], [32.53546144944368, -25.978254284855364], [32.67251590716561, -25.887748725872193], [32.71316905842884, -25.821830777049115], [32.694690670107754, -25.749889351619146], [32.7427444133105, -25.75037197764724], [32.93783946766808, -25.49849127340541], [33.516495456489785, -25.198195745483087], [35.14848327994, -24.582500484474267], [35.50031659174229, -24.075424212028288], [35.536796602816096, -23.817195848497644], [35.49026869840667, -23.82342718700012], [35.45299149077858, -23.88691714806651], [35.41569897441017, -23.850664152786788], [35.390281686678875, -23.92363551638009], [35.32637025976688, -23.961921649236107], [35.39970776193031, -23.738996531637728], [35.378093690033396, -23.69979290255338], [35.43274311179111, -23.653835307557156], [35.54271698506776, -23.046773884184486], [35.60268016869536, -22.927871740183942], [35.561065429771226, -22.91246303509207], [35.517150875057276, -22.52400017054549], [35.51904714371707, -22.308676155326026], [35.538317997322714, -22.177861085408882], [35.49184419813986, -22.11403653568679], [35.42824934971116, -22.163526560835884], [35.400127238577696, -22.203560254083516], [35.33567089213772, -22.194755255347655], [35.2501640423045, -21.58430860575101], [35.111757575530646, -21.29110046696861], [35.06965775437889, -21.30079868852736], [35.084255716415136, -21.255041615537696], [35.0704314320406, -21.192879366396195], [35.066223113928906, -21.137004850453], [35.03154830865165, -21.120989947031077], [35.03543854835154, -21.08285709423856], [35.075869736880385, -21.052223505363433], [35.11226616209646, -20.997465882454467], [35.09362962490835, -20.91443526145463], [35.055463102384735, -20.9042987589604], [35.0161462526353, -20.84548822350372], [35.001363872671476, -20.812205543131], [35.02255002735639, -20.781046590841136], [35.01015991259127, -20.74503134499273], [34.99323604434875, -20.711659424505278], [34.89401673703471, -20.69460397462271], [34.77177711716293, -20.5519478787306], [34.68498610074698, -20.503135713831337], [34.707914866220655, -20.43888549771995], [34.658481558812525, -20.428356369739127], [34.698677258816524, -20.351994771007256], [34.6637857835919, -20.333288100558086], [34.71908885164981, -20.281163259786645], [34.740243295840024, -20.22101026409848], [34.68485084632035, -20.18182923420077], [34.77254289537777, -20.16222215919899], [34.76292840637372, -19.90261221332632], [34.705342303922755, -19.75796592170409], [34.77544124294337, -19.747865091483007], [34.870365146197436, -19.851354622243154], [35.21307420007488, -19.621181038517527], [35.292852739093746, -19.554879743505563], [35.448916398302984, -19.389849210845973], [35.46753566758021, -19.358261922185434], [35.69034744723879, -19.099473672920272], [35.74168718122889, -19.077028264253993], [35.86864327974985, -18.99228633735623], [35.902348316598996, -18.952751640380416], [35.95587431585164, -18.91654809115822], [35.9992415118075, -18.904892767407834], [36.04011468341832, -18.91400999476228], [36.14705643186068, -18.879218221975556], [36.18436260561885, -18.897057375861426], [36.28074423930711, -18.874983372958678], [36.33606454471214, -18.843617602886557], [36.3418704570661, -18.801834263251028], [36.38574772970326, -18.788223812317813], [36.393487493774494, -18.729078989198605], [36.45697258050548, -18.558019141221617], [36.74566271692676, -18.305147126583673], [36.774059323202934, -18.277162557682296], [36.800895666168124, -18.24829295294686], [36.715278629119425, -18.20030781030871], [36.92892454496327, -18.10169985352778], [36.95430329618182, -18.040531008233813], [36.92298504173128, -17.9612712746112], [36.98832725294863, -18.019722983034733], [37.18577497682724, -17.785231901055933], [37.17791370328023, -17.745550118542393], [37.23431598007818, -17.7482312563219], [37.319381670926404, -17.693622638961777], [37.35905457941104, -17.642461777484613], [37.553523994889204, -17.547073340474096], [37.603057619277344, -17.543709832012706], [37.69956587889051, -17.476913008903775], [37.73416137080652, -17.45158771492499], [38.061154133098476, -17.323930003464817], [38.10573577809861, -17.278234497967752], [38.46127914277095, -17.15125495943895], [38.507888978558476, -17.108336749554702], [38.54303553227159, -17.130662554066756], [38.59106067539899, -17.09008595265449], [38.65488270524701, -17.086788329075556], [38.68957148331505, -17.036499752245675], [38.703831543430965, -17.081923788249007], [39.0716444788687, -17.013514979183192], [39.0693498632756, -16.96353985419081], [39.117646433058816, -16.911040655072757], [39.269721463338605, -16.788328447307034], [39.71346808196388, -16.525072864305383], [39.777612637390334, -16.46634864826508], [39.86161527562415, -16.441011861899533], [39.77544115686697, -16.341866265779085], [39.747158017889895, -16.317806264872278], [39.85471352314834, -16.26417914816576], [39.861395291227275, -16.221530372733316], [39.894628928340055, -16.175425309796495], [39.89907523245428, -16.226387363252005], [40.021571299536305, -16.18974119608065], [40.12655637182674, -16.01466753209979], [40.087313698975215, -15.997298355236389], [40.139019519845185, -15.974768568327773], [40.142900831268484, -15.927663823064927], [40.43900091176946, -15.60615103754882], [40.47412178286454, -15.581594977994284], [40.678530330161244, -15.253168894300751], [40.65949734200521, -15.219415796475804], [40.58864101205774, -15.163239201128569], [40.495810380568514, -15.183351193220583], [40.65231889210442, -15.088423326327183], [40.70974664578825, -15.0819621357298], [40.654785142267855, -15.010208141017124], [40.61899041763822, -14.998065947446324], [40.664726286658215, -14.973451598680278], [40.74305722741331, -14.961111062365921], [40.674694057780144, -14.932953842073179], [40.83042904902638, -14.839179062293976], [40.81685254374424, -14.800606734013737], [40.83808518162783, -14.750290854866874], [40.82134249716232, -14.52986624653916], [40.79529949449194, -14.417071316727451], [40.66361235319841, -14.466187510152917], [40.65453338775141, -14.354085928577813], [40.73500061522993, -14.320194265522302], [40.67693711356622, -14.2022199298345], [40.590599083800306, -14.243553134613606], [40.584472689897005, -14.206232989613437], [40.55349732259157, -14.234064085917657], [40.53427883983443, -14.193760894987436], [40.62873456394063, -14.067777623366418], [40.60800935446401, -14.002840034661451], [40.542728434345996, -13.616673451902127], [40.5689697325284, -13.591048273917117], [40.542654259843125, -13.56128330093327], [40.508077748426935, -13.525294794990296], [40.564243280500875, -13.312059373644347], [40.58676148958303, -12.967200246014357], [40.51182830145692, -12.982832720159921], [40.51135243115805, -13.019119483280424], [40.44520724062015, -13.028703794022372], [40.42709362987166, -12.921637938923865], [40.496436785386614, -12.884335801390174], [40.51318377308359, -12.926057403199735], [40.562129972771444, -12.794978108203773], [40.62522505290192, -12.777349500761122], [40.58262691565669, -12.744258739626593], [40.614749646322814, -12.723438449596271], [40.56967243978668, -12.693258564276258], [40.569802572702194, -12.655609334410418], [40.551433119106825, -12.56147788109407], [40.52082555733613, -12.531999007742828], [40.461035911843716, -12.505324269787806], [40.56953897181618, -12.397331309346177], [40.51545387114972, -12.384458407619311], [40.498827342927825, -12.282534170558742], [40.47231671695726, -12.256795897407475], [40.54650880382171, -11.998934731026933], [40.481605567144555, -11.901895516372168], [40.50958632071908, -11.858208652760647], [40.40659350431788, -11.679832388654553], [40.440614870700955, -11.66037450825475], [40.467922865307024, -11.421997910027175], [40.42797055087375, -11.40837344329709], [40.380320635884665, -11.361197925948836], [40.348459278106546, -11.326259477978692], [40.489486088264215, -11.169371753290905], [40.549235793518925, -11.025457196975571], [40.49189719809164, -10.954870928626375], [40.58946473281363, -10.866676016466984], [40.596747544772036, -10.825226520939207], [40.48437022720329, -10.78122100536489], [40.59251964649279, -10.695696890529133], [40.52076641279651, -10.557308604740253], [40.52337865047584, -10.483323714128026], [40.48138630559006, -10.518047502907061], [40.47317719276361, -10.481641767834624], [40.06345638513641, -10.749834811616918], [39.32211317932408, -11.11408471106717], [39.20101115968274, -11.16441758240692], [38.86449426797663, -11.19051421730426], [38.501587877946385, -11.402025849760399], [38.12156628400721, -11.263412425730511], [37.85356541559122, -11.30725124736057], [37.7278608095235, -11.555625406619848], [37.34207899443237, -11.679511060437022], [36.82313739638095, -11.56112034164901], [36.60930715744107, -11.724452318547195], [36.563446032210905, -11.712532307568457], [36.525453590278616, -11.757456316053267], [36.47425947322544, -11.680096680941546], [36.23264799043683, -11.700991186693479], [36.18742079418354, -11.61450208794715], [36.19789391088149, -11.578414704648102], [36.15409982807864, -11.570353182692184], [36.12660799154224, -11.54556570642372], [35.91353570999107, -11.438250981622575], [35.828028438365784, -11.410931407897895], [35.79643003224092, -11.442746818013081], [35.599825296501194, -11.560327979785804], [34.63689653821027, -11.573565995010286], [34.563656593605415, -11.892161852946941], [34.37823062909808, -12.171651759432324], [34.530364544058685, -12.8800523154133], [34.607173845815915, -13.4831100526936], [34.8668983183218, -13.48311046149667], [35.858946858540776, -14.659987503094158], [35.8721120822958, -14.895362909635018], [35.91857314264114, -14.895350284471473], [35.79732097347544, -15.19779570008416], [35.84469136265011, -15.528494234322704], [35.79361703323134, -16.04286129769325], [35.48903413307958, -16.143596571305068], [35.399840950600314, -16.139274391610513], [35.286027361712726, -16.298941601176125], [35.22434075384201, -16.494383072595312], [35.15066465341648, -16.572614884496602], [35.28477563777108, -16.74738969244354], [35.27830676830885, -16.91287159034476], [35.30394610177603, -17.125912298754255], [35.07796826312739, -17.10798426632083], [35.07429114623661, -16.99231706386353], [35.16721421089691, -16.920151707839434], [35.15136289904759, -16.832078179060417], [35.00220038537455, -16.794959022627044], [34.643373284037985, -16.43975958419174], [34.504489115573975, -16.290583077645863], [34.39993832014871, -16.179785283280054], [34.434574752762835, -16.06023380541632], [34.262794319064696, -15.88537284793921], [34.3378942451902, -15.741114648924663], [34.45136249333012, -15.604821313952023], [34.44519538219917, -15.421892657856514], [34.516634600227206, -15.376121468522081], [34.59928673052568, -15.262453135292969], [34.584838959808934, -15.053063214835994], [34.58937902174264, -14.936803214878168], [34.51080238721519, -14.552485077407786], [34.37136506351348, -14.388266595827728], [34.08692577039681, -14.489469009745454], [33.90229913641536, -14.486077173228082], [33.79904700817173, -14.551246102863923], [33.711816436001776, -14.517074693722824], [33.68519551626574, -14.61322682482063], [33.40869604116202, -14.279011199712352], [33.29613063690879, -14.142400954104982], [33.30549474584526, -14.048283431908667], [33.226479500690225, -14.003616008210894], [31.552685622252735, -14.582184400058857], [30.219860840240752, -14.997155242897287], [30.30781414954546, -15.292020935912916], [30.375337988229436, -15.412737082860607], [30.390014141457254, -15.582924807882518]], [[40.622890503901466, -14.474508256473683], [40.62982174258211, -14.569858588598935], [40.66361235319841, -14.466187510152917], [40.622890503901466, -14.474508256473683]], [[32.52716823581058, -25.94085506217605], [32.49140166129307, -25.984548571080595], [32.53546144944368, -25.978254284855364], [32.52716823581058, -25.94085506217605]], [[34.65887529137216, -20.476438898003966], [34.65106867130658, -20.523625459343435], [34.68498610074698, -20.503135713831337], [34.65887529137216, -20.476438898003966]], [[34.612126616975985, -11.97404598880015], [34.57919892510072, -12.057041188682481], [34.68756635691602, -12.055484617159484], [34.612126616975985, -11.97404598880015]], [[35.38846583998073, -23.66009329785535], [35.34576795817714, -23.669002542144423], [35.31985089231656, -23.704385738083428], [35.378093690033396, -23.69979290255338], [35.38846583998073, -23.66009329785535]], [[34.78233312802289, -12.081450119480115], [34.74210661660513, -11.99954854109669], [34.68756635691602, -12.055484617159484], [34.70637835636988, -12.136484703157608], [34.78233312802289, -12.081450119480115]]], "type": "Polygon"}], "type": "GeometryCollection"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_22c4ce2891bae997f37a1e08ee554f16.bindTooltip(
+                `<div>
+                     Mozambique
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_22c4ce2891bae997f37a1e08ee554f16.addTo(feature_group_acb0a330cafeb4666d76e41bb12f5927);
+        
+    
+        function geo_json_e49894b30ae4f81db04485ca3e7a172e_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {"color": "#2c7bb6", "dashArray": "6 4", "fillColor": "#2c7bb6", "fillOpacity": 0.04, "weight": 2};
+            }
+        }
+
+        function geo_json_e49894b30ae4f81db04485ca3e7a172e_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_e49894b30ae4f81db04485ca3e7a172e = L.geoJson(null, {
+                onEachFeature: geo_json_e49894b30ae4f81db04485ca3e7a172e_onEachFeature,
+            
+                style: geo_json_e49894b30ae4f81db04485ca3e7a172e_styler,
+            ...{
+}
+        });
+
+        function geo_json_e49894b30ae4f81db04485ca3e7a172e_add (data) {
+            geo_json_e49894b30ae4f81db04485ca3e7a172e
+                .addData(data);
+        }
+            geo_json_e49894b30ae4f81db04485ca3e7a172e_add({"features": [{"geometry": {"geometries": [{"coordinates": [[32.4683090665459, -21.30043865274685], [32.49713441958377, -21.340926510068876]], "type": "LineString"}, {"coordinates": [[[25.26291968725135, -17.7913343181546], [25.284348176826043, -18.012475060818936], [25.717500034954845, -18.59204345926183], [25.80152583512074, -18.68192601652593], [25.85430477397172, -18.854456355680618], [25.989164374466437, -19.000360714469203], [25.99644936753015, -19.154972060128934], [26.185033930986332, -19.550648122798826], [26.357116469728474, -19.61268745650263], [26.344679674971832, -19.671322974043072], [26.59978899823549, -19.851363683510428], [26.97440866556479, -20.012318493607488], [27.216977797384228, -20.093457420635875], [27.297007405525598, -20.395275335356953], [27.288670227691682, -20.498945147942212], [27.718438461645363, -20.50919934596132], [27.695122617505877, -21.07338034649595], [27.97775826666575, -21.456984858733964], [28.02457713756423, -21.57639186087509], [28.421176447624358, -21.63599201995754], [28.714250733952458, -21.691113547621015], [29.06265325592607, -21.802665710805716], [29.032164165233194, -21.987984305988792], [29.16958901552118, -22.075999629402464], [29.277454930731103, -22.093955424653135], [29.3475113848562, -22.177013434319495], [29.742342969524973, -22.141222153410094], [30.189750737047643, -22.296830240915092], [30.381676945046486, -22.350890676670474], [30.941849458892406, -22.31265010936145], [31.27936546934632, -22.390647055870218], [31.349968796642262, -22.397478415510346], [32.4683090665459, -21.30043865274685], [32.37972559020781, -21.11543812076867], [32.51522594060881, -20.87283455039146], [32.52148046905562, -20.594498855834328], [32.70928113544144, -20.493743371960406], [32.873407764616196, -20.2348441174419], [32.86727545658079, -20.129796277427886], [32.90989817236409, -20.110641527946967], [32.96807895415089, -20.03916274329379], [33.027344481260734, -20.022018497065616], [33.06219899136275, -19.776398350475695], [32.956200249753024, -19.717804172385627], [32.97579598954437, -19.651038246170295], [32.83296232461666, -19.6718741850681], [32.83748231819359, -19.47657859153461], [32.779425540921636, -19.412637663247434], [32.884680084711896, -19.105190446410806], [32.8340984312898, -19.01075117914681], [32.71378767591448, -19.005386192685926], [32.73126312727416, -18.82324384989427], [32.93601204301592, -18.760611971006213], [32.934154061178255, -18.648061602522475], [32.899631845343926, -18.50502034264876], [33.02889182818841, -18.430744110117388], [33.05668678986446, -18.33982802820623], [32.95712358165526, -18.048751863241755], [32.94230961325132, -18.010339060153772], [32.99623231175836, -17.80401228075086], [33.046489323222204, -17.598030052191593], [32.97315016693848, -17.478898655126912], [33.046690295735424, -17.341042110447393], [32.83303126599919, -16.922860201448415], [32.92639924382381, -16.86450737568793], [32.97308123572123, -16.703717757203684], [32.73439060710732, -16.693671901408514], [32.67957213985739, -16.583098589107227], [32.19250084316931, -16.436463269129025], [31.933695910398928, -16.413709553568232], [31.68898737768194, -16.19811549546681], [31.428365882149713, -16.13679283293789], [31.25590439769687, -16.007567243034007], [31.02770131567898, -16.027652202600287], [30.95793807271039, -16.029788176173728], [30.431389735428652, -16.005465782619954], [30.42188123324576, -15.62116535142698], [30.208733137848046, -15.666571738107832], [30.067484224175868, -15.62771102573574], [29.67439889954549, -15.646624584798339], [29.19456598731729, -15.789665004484018], [28.971427100598518, -15.942592764936059], [28.853363737382864, -16.037195104575407], [28.805166827179047, -16.493360153265282], [28.181905773922924, -16.78502562685023], [27.786026762884273, -17.024816210640466], [27.53435667520592, -17.426805491995715], [27.181793790733373, -17.760372302949666], [26.998283180890798, -17.960695225049626], [26.637271577310088, -18.055125318429603], [26.345644252944684, -17.929723828237183], [26.193198793937377, -17.89596192197013], [26.08846788813822, -17.934994875216386], [26.091706286787087, -17.98153805022166], [25.880211903478195, -17.97513020520375], [25.750986360095965, -17.84852294228173], [25.55055062848699, -17.838601109464783], [25.31993597784554, -17.828403631032522], [25.26291968725135, -17.7913343181546]]], "type": "Polygon"}], "type": "GeometryCollection"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+            geo_json_e49894b30ae4f81db04485ca3e7a172e.bindTooltip(
+                `<div>
+                     Zimbabwe
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            geo_json_e49894b30ae4f81db04485ca3e7a172e.addTo(feature_group_acb0a330cafeb4666d76e41bb12f5927);
+        
+    
+            feature_group_acb0a330cafeb4666d76e41bb12f5927.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_34cce2472518c4bfb86cb313ec69cbf7 = L.marker(
+                [-6.19, 39.29],
+                {
+}
+            ).addTo(feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a);
+        
+    
+            var div_icon_2839457c87d30da02b64b3e7457b468b = L.divIcon({
+  "html": "\n            \u003cdiv style=\u0027\n                font-family:Arial;\n                font-size:11px;\n                font-weight:bold;\n                color:#fd8d3c;\n                background:rgba(255,255,255,0.88);\n                padding:3px 7px;\n                border-radius:5px;\n                border:1px solid #fd8d3c;\n                white-space:nowrap;\n                box-shadow:0 1px 5px rgba(0,0,0,0.15);\u0027\u003e\n              #1 Dar es Salaam\n              \u003cspan style=\u0027font-weight:normal;font-size:9px;color:#666;\u0027\u003e\n                \u0026nbsp;PEI=97.7\n              \u003c/span\u003e\n            \u003c/div\u003e",
+  "iconSize": [160, 30],
+  "iconAnchor": [80, 30],
+  "className": "empty",
+});
+        
+    
+            marker_34cce2472518c4bfb86cb313ec69cbf7.bindTooltip(
+                `<div>
+                     #1 Dar es Salaam | Pop=5.6M | PEI=97.74
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_34cce2472518c4bfb86cb313ec69cbf7.setIcon(div_icon_2839457c87d30da02b64b3e7457b468b);
+            
+    
+            var marker_7766abbe15bbf554bfff4fcd40c6d726 = L.marker(
+                [-14.82, 28.28],
+                {
+}
+            ).addTo(feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a);
+        
+    
+            var div_icon_0ffc1c6b76f4c3748b7a2d221c48d8bd = L.divIcon({
+  "html": "\n            \u003cdiv style=\u0027\n                font-family:Arial;\n                font-size:11px;\n                font-weight:bold;\n                color:#e31a1c;\n                background:rgba(255,255,255,0.88);\n                padding:3px 7px;\n                border-radius:5px;\n                border:1px solid #e31a1c;\n                white-space:nowrap;\n                box-shadow:0 1px 5px rgba(0,0,0,0.15);\u0027\u003e\n              #2 Lusaka\n              \u003cspan style=\u0027font-weight:normal;font-size:9px;color:#666;\u0027\u003e\n                \u0026nbsp;PEI=49.1\n              \u003c/span\u003e\n            \u003c/div\u003e",
+  "iconSize": [160, 30],
+  "iconAnchor": [80, 30],
+  "className": "empty",
+});
+        
+    
+            marker_7766abbe15bbf554bfff4fcd40c6d726.bindTooltip(
+                `<div>
+                     #2 Lusaka | Pop=2.8M | PEI=49.07
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7766abbe15bbf554bfff4fcd40c6d726.setIcon(div_icon_0ffc1c6b76f4c3748b7a2d221c48d8bd);
+            
+    
+            var marker_b6d663418c8b49632144cdef41f45d75 = L.marker(
+                [-25.36, 32.59],
+                {
+}
+            ).addTo(feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a);
+        
+    
+            var div_icon_0a81ea8feb1824d68fd2d067fb17f26a = L.divIcon({
+  "html": "\n            \u003cdiv style=\u0027\n                font-family:Arial;\n                font-size:11px;\n                font-weight:bold;\n                color:#41ab5d;\n                background:rgba(255,255,255,0.88);\n                padding:3px 7px;\n                border-radius:5px;\n                border:1px solid #41ab5d;\n                white-space:nowrap;\n                box-shadow:0 1px 5px rgba(0,0,0,0.15);\u0027\u003e\n              #3 Maputo\n              \u003cspan style=\u0027font-weight:normal;font-size:9px;color:#666;\u0027\u003e\n                \u0026nbsp;PEI=44.4\n              \u003c/span\u003e\n            \u003c/div\u003e",
+  "iconSize": [160, 30],
+  "iconAnchor": [80, 30],
+  "className": "empty",
+});
+        
+    
+            marker_b6d663418c8b49632144cdef41f45d75.bindTooltip(
+                `<div>
+                     #3 Maputo | Pop=2.4M | PEI=44.44
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b6d663418c8b49632144cdef41f45d75.setIcon(div_icon_0a81ea8feb1824d68fd2d067fb17f26a);
+            
+    
+            var marker_4e3ab46c9e890c853b5529e732629a37 = L.marker(
+                [-17.229999999999997, 31.05],
+                {
+}
+            ).addTo(feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a);
+        
+    
+            var div_icon_30b5d7e052f2aa18c75c2f6455641d76 = L.divIcon({
+  "html": "\n            \u003cdiv style=\u0027\n                font-family:Arial;\n                font-size:11px;\n                font-weight:bold;\n                color:#2c7bb6;\n                background:rgba(255,255,255,0.88);\n                padding:3px 7px;\n                border-radius:5px;\n                border:1px solid #2c7bb6;\n                white-space:nowrap;\n                box-shadow:0 1px 5px rgba(0,0,0,0.15);\u0027\u003e\n              #4 Harare\n              \u003cspan style=\u0027font-weight:normal;font-size:9px;color:#666;\u0027\u003e\n                \u0026nbsp;PEI=38.6\n              \u003c/span\u003e\n            \u003c/div\u003e",
+  "iconSize": [160, 30],
+  "iconAnchor": [80, 30],
+  "className": "empty",
+});
+        
+    
+            marker_4e3ab46c9e890c853b5529e732629a37.bindTooltip(
+                `<div>
+                     #4 Harare | Pop=2.2M | PEI=38.64
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4e3ab46c9e890c853b5529e732629a37.setIcon(div_icon_30b5d7e052f2aa18c75c2f6455641d76);
+            
+    
+            var marker_5eda1c08cde42292ff2b321f9a137f1c = L.marker(
+                [-13.370000000000001, 33.78],
+                {
+}
+            ).addTo(feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a);
+        
+    
+            var div_icon_61dccc9b2318d724ff49da6478600930 = L.divIcon({
+  "html": "\n            \u003cdiv style=\u0027\n                font-family:Arial;\n                font-size:11px;\n                font-weight:bold;\n                color:#fecc5c;\n                background:rgba(255,255,255,0.88);\n                padding:3px 7px;\n                border-radius:5px;\n                border:1px solid #fecc5c;\n                white-space:nowrap;\n                box-shadow:0 1px 5px rgba(0,0,0,0.15);\u0027\u003e\n              #5 Lilongwe\n              \u003cspan style=\u0027font-weight:normal;font-size:9px;color:#666;\u0027\u003e\n                \u0026nbsp;PEI=28.3\n              \u003c/span\u003e\n            \u003c/div\u003e",
+  "iconSize": [160, 30],
+  "iconAnchor": [80, 30],
+  "className": "empty",
+});
+        
+    
+            marker_5eda1c08cde42292ff2b321f9a137f1c.bindTooltip(
+                `<div>
+                     #5 Lilongwe | Pop=1.7M | PEI=28.26
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5eda1c08cde42292ff2b321f9a137f1c.setIcon(div_icon_61dccc9b2318d724ff49da6478600930);
+            
+    
+            feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a.addTo(map_f20df19c82809b505f892fa9031cb74a);
+        
+    
+            var layer_control_3aa74ff311bff7903c121e6894f5a2cd_layers = {
+                base_layers : {
+                    "CartoDB Light" : tile_layer_7edbcbe691e283896c260bc5eefa0060,
+                    "CartoDB Dark" : tile_layer_e75b93d4538fa77ff129abbf9a42e28f,
+                    "Esri Satellite" : tile_layer_7cfbd469935e1d659eb01bb2f9cd7ce1,
+                },
+                overlays :  {
+                    "Predicted Fire Anomaly (RF)" : heat_map_2233484c5b2955391fee544a41059499,
+                    "\ud83d\udca8 City Smoke Exposure (PEI)" : feature_group_f224cbbef0401c5212ad682035cedd25,
+                    "Country Boundaries" : feature_group_acb0a330cafeb4666d76e41bb12f5927,
+                    "\ud83c\udfd9\ufe0f City Labels (Top 5)" : feature_group_72e3fc8cfe1c9a80ae45dd8b1ab3472a,
+                },
+            };
+            let layer_control_3aa74ff311bff7903c121e6894f5a2cd = L.control.layers(
+                layer_control_3aa74ff311bff7903c121e6894f5a2cd_layers.base_layers,
+                layer_control_3aa74ff311bff7903c121e6894f5a2cd_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_f20df19c82809b505f892fa9031cb74a);
+
+        
+</script>
+</html>
