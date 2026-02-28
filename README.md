@@ -450,15 +450,18 @@ Lundberg, S. M., & Lee, S. I. (2017). A unified approach to interpreting model p
 TROPOMI on the ESA Sentinel-5 Precursor
 Veefkind, J. P., Aben, I., McMullan, K., Förster, H., de Vries, J., Otter, G., et al. (2012). TROPOMI on the ESA Sentinel-5 Precursor: A GMES mission for global observations of the atmospheric composition for climate, air quality, and ozone layer applications. Remote Sensing of Environment, 120, 70–83. https://doi.org/10.1016/j.rse.2011.09.027
 
-WorldPop Global High-Resolution Population Denominators Project
-WorldPop. (2018). Global High-Resolution Population Denominators Project. University of Southampton. https://doi.org/10.5258/SOTON/WP00647, 110(16), 6442–6447. https://doi.org/10.1073/pnas.1211466110
+WorldPop. (2018). Global High-Resolution Population Denominators Project
+University of Southampton. https://doi.org/10.5258/SOTON/WP00647
+
+Archibald, S., Lehmann, C. E. R., Gómez-Dans, J. L., & Bradstock, R. A. (2013).
+Defining pyromes and global syndromes of fire regimes. Proceedings of the National Academy of Sciences, 110(16), 6442–6447.
+https://doi.org/10.1073/pnas.1211466110
 
 ---
 
 ## 12. Author and Declaration
 
 **Ujjwal Kumar Swain**  
-Geospatial AI Data & Policy Analyst, United Nations Population Fund (UNFPA) India, Odisha State Office  
 M.Sc. Geoinformation Science & Earth Observation- ITC, University of Twente / IIRS-ISRO
 
 📧 [ujjwalks.iirs@gmail.com](mailto:ujjwalks.iirs@gmail.com)
