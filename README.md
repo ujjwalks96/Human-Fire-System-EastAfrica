@@ -209,7 +209,7 @@ Human-Fire-System-EastAfrica/
 │   │   ├── fig6_city_smoke_timeseries.png         ← Monthly AAI × fire count (top 6 cities)
 │   │   └── fig7_human_fire_feedback_synthesis.png ← 4-panel synthesis (both modules)
 │   └── maps/
-│       └── human_fire_system_interactive_map.html ← ⭐ Self-contained interactive map
+│       └── human_fire_system_interactive_map.html ← Self-contained interactive map
 │
 ├── data/
 │   ├── processed/
